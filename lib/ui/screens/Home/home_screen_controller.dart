@@ -126,28 +126,28 @@ class HomeScreenController extends GetxController {
         .map((section) {
           if (section.items.every((item) => item is AlbumEntity)) {
             return AlbumContent(
-              title: section.title,
+              title: section.title ?? 'Untitled',
               albumList: (section.items as List)
                   .cast<AlbumEntity>()
                   .map((item) => Album(
-                        browseId: item.id,
-                        title: item.title,
+                        browseId: item.id ?? '',
+                        title: item.title ?? 'Unknown Album',
                         artists: [
-                          {'name': item.artist}
+                          {'name': item.artist ?? 'Unknown Artist'}
                         ],
-                        thumbnailUrl: item.thumbnailUrl,
+                        thumbnailUrl: item.thumbnailUrl ?? '',
                       ))
                   .toList(),
             );
           } else if (section.items.every((item) => item is PlaylistEntity)) {
             return PlaylistContent(
-              title: section.title,
+              title: section.title ?? 'Untitled',
               playlistList: (section.items as List)
                   .cast<PlaylistEntity>()
                   .map((item) => Playlist(
-                        playlistId: item.id,
-                        title: item.title,
-                        thumbnailUrl: item.thumbnailUrl,
+                        playlistId: item.id ?? '',
+                        title: item.title ?? 'Unknown Playlist',
+                        thumbnailUrl: item.thumbnailUrl ?? '',
                       ))
                   .toList(),
             );
