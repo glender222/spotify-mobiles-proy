@@ -63,28 +63,26 @@ class HomeScreenController extends GetxController {
     isContentFetched.value = false;
     networkError.value = false;
     try {
+      // Load local history and recommendations (Clean Architecture)
       final localHistory = await _getRecentlyPlayedUseCase();
       final localRecommendations = await _getRecommendationsUseCase();
 
-      if (localHistory.isNotEmpty || localRecommendations.isNotEmpty) {
-        recentlyPlayed.value = localHistory;
-        recommendations.value = localRecommendations;
-        // Note: recentPlaylists logic is complex and will be handled separately.
+      recentlyPlayed.value = localHistory;
+      recommendations.value = localRecommendations;
+
+      // Also load home content sections (albums, playlists, etc.)
+      final cachedContent = await _getCachedHomeContentUseCase();
+      if (cachedContent.isNotEmpty) {
+        // Load from cache
+        fixedContent.value = _mapSectionsToLegacy(cachedContent);
         isContentFetched.value = true;
       } else {
-        // If local is empty, fetch from network.
-        // This combines the old loadContentFromDb and loadContentFromNetwork.
-        final cachedContent = await _getCachedHomeContentUseCase();
-        if (cachedContent.isNotEmpty) {
-          // Simplified: map cached content to fixedContent
-          fixedContent.value = _mapSectionsToLegacy(cachedContent);
-          isContentFetched.value = true;
-        } else {
-          await loadContentFromNetwork();
-        }
+        // Load from network if cache is empty
+        await loadContentFromNetwork();
       }
     } catch (e) {
       networkError.value = true;
+      printERROR('[Home] Failed to load content: $e');
     }
   }
 
