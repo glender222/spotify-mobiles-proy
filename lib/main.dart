@@ -166,6 +166,7 @@ class MyApp extends StatelessWidget {
 
 Future<void> startApplicationServices() async {
   // Repositories - MUST be injected FIRST
+  Get.put<HiveInterface>(Hive, permanent: true);
   Get.put<SettingsRepository>(SettingsRepositoryImpl(), permanent: true);
   Get.lazyPut<DownloadRepository>(() => DownloadRepositoryImpl(), fenix: true);
   Get.lazyPut<SearchRepository>(() => SearchRepositoryImpl(), fenix: true);

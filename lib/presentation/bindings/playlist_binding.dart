@@ -16,13 +16,14 @@ class PlaylistBinding extends Bindings {
   @override
   void dependencies() {
     Get.lazyPut<PlaylistLocalDataSource>(
-      () => PlaylistLocalDataSourceImpl(Get.find<HiveInterface>()),
+      () => PlaylistLocalDataSourceImpl(Hive),
     );
     Get.lazyPut<PlaylistRemoteDataSource>(
-      () => PlaylistRemoteDataSourceImpl(musicServices: Get.find<MusicServices>()),
+      () => PlaylistRemoteDataSourceImpl(
+          musicServices: Get.find<MusicServices>()),
     );
     Get.lazyPut<PlaylistExportDataSource>(
-      () => PlaylistExportDataSourceImpl(hive: Get.find<HiveInterface>()),
+      () => PlaylistExportDataSourceImpl(hive: Hive),
     );
 
     Get.lazyPut<PlaylistRepository>(

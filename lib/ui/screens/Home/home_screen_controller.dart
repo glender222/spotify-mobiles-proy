@@ -20,20 +20,26 @@ import '/ui/player/player_controller.dart';
 import '../../../domain/home/entities/album_entity.dart';
 import '../../../domain/playlist/entities/playlist_entity.dart';
 
-
 class HomeScreenController extends GetxController {
-  final GetHomePageContentUseCase _getHomePageContentUseCase = Get.find<GetHomePageContentUseCase>();
-  final GetRecentlyPlayedUseCase _getRecentlyPlayedUseCase = Get.find<GetRecentlyPlayedUseCase>();
-  final GetRecommendationsUseCase _getRecommendationsUseCase = Get.find<GetRecommendationsUseCase>();
-  final GetCachedHomeContentUseCase _getCachedHomeContentUseCase = Get.find<GetCachedHomeContentUseCase>();
-  final CacheHomeContentUseCase _cacheHomeContentUseCase = Get.find<CacheHomeContentUseCase>();
-  final GetQuickPicksUseCase _getQuickPicksUseCase = Get.find<GetQuickPicksUseCase>();
+  final GetHomePageContentUseCase _getHomePageContentUseCase =
+      Get.find<GetHomePageContentUseCase>();
+  final GetRecentlyPlayedUseCase _getRecentlyPlayedUseCase =
+      Get.find<GetRecentlyPlayedUseCase>();
+  final GetRecommendationsUseCase _getRecommendationsUseCase =
+      Get.find<GetRecommendationsUseCase>();
+  final GetCachedHomeContentUseCase _getCachedHomeContentUseCase =
+      Get.find<GetCachedHomeContentUseCase>();
+  final CacheHomeContentUseCase _cacheHomeContentUseCase =
+      Get.find<CacheHomeContentUseCase>();
+  final GetQuickPicksUseCase _getQuickPicksUseCase =
+      Get.find<GetQuickPicksUseCase>();
 
   final isContentFetched = false.obs;
   final networkError = false.obs;
 
   final recentlyPlayed = <MediaItem>[].obs;
-  final recentPlaylists = <Playlist>[].obs; // This will be harder to refactor, handle later.
+  final recentPlaylists =
+      <Playlist>[].obs; // This will be harder to refactor, handle later.
   final recommendations = <MediaItem>[].obs;
   final quickPicks = QuickPicks([]).obs;
   final middleContent = [].obs;
@@ -70,9 +76,9 @@ class HomeScreenController extends GetxController {
         // This combines the old loadContentFromDb and loadContentFromNetwork.
         final cachedContent = await _getCachedHomeContentUseCase();
         if (cachedContent.isNotEmpty) {
-           // Simplified: map cached content to fixedContent
-           fixedContent.value = _mapSectionsToLegacy(cachedContent);
-           isContentFetched.value = true;
+          // Simplified: map cached content to fixedContent
+          fixedContent.value = _mapSectionsToLegacy(cachedContent);
+          isContentFetched.value = true;
         } else {
           await loadContentFromNetwork();
         }
@@ -90,53 +96,79 @@ class HomeScreenController extends GetxController {
       middleContent.value = []; // Simplifying for now
 
       // We still need to handle quick picks separately for now
-      final String contentType = Hive.box("AppPrefs").get("discoverContentType") ?? "QP";
+      final String contentType =
+          Hive.box("AppPrefs").get("discoverContentType") ?? "QP";
       final quickPicksEntity = await _getQuickPicksUseCase(contentType);
       quickPicks.value = QuickPicks(
-        quickPicksEntity.items.map((track) => MediaItem(id: track.id, title: track.title, artist: track.artist)).toList(),
-        title: quickPicksEntity.title
-      );
+          quickPicksEntity.items
+              .map((track) => MediaItem(
+                  id: track.id, title: track.title, artist: track.artist))
+              .toList(),
+          title: quickPicksEntity.title);
 
       isContentFetched.value = true;
       _cacheHomeContentUseCase(homeSections);
     } catch (e) {
-      networkError.value = !silent;
+      printERROR('[Home] Failed to load content from network: $e');
+      if (!silent) {
+        networkError.value = true;
+        // Check if we have any cached content to show
+        final cachedSections = await _getCachedHomeContentUseCase();
+        if (cachedSections.isNotEmpty) {
+          fixedContent.value = _mapSectionsToLegacy(cachedSections);
+          isContentFetched.value = true;
+          printINFO('[Home] Displaying cached content due to network error');
+        }
+      }
     }
   }
 
   List<dynamic> _mapSectionsToLegacy(List<dynamic> sections) {
-     return sections.map((section) {
-        if (section.items.every((item) => item is AlbumEntity)) {
-          return AlbumContent(
-            title: section.title,
-            albumList: section.items.map((item) => Album(
-              browseId: item.id,
-              title: item.title,
-              artists: [{'name': item.artist}],
-              thumbnailUrl: item.thumbnailUrl,
-            )).toList(),
-          );
-        } else if (section.items.every((item) => item is PlaylistEntity)) {
-          return PlaylistContent(
-            title: section.title,
-            playlistList: section.items.map((item) => Playlist(
-              playlistId: item.id,
-              title: item.title,
-              thumbnailUrl: item.thumbnailUrl,
-            )).toList(),
-          );
-        }
-        return null;
-      }).where((item) => item != null).toList();
+    return sections
+        .map((section) {
+          if (section.items.every((item) => item is AlbumEntity)) {
+            return AlbumContent(
+              title: section.title,
+              albumList: (section.items as List)
+                  .cast<AlbumEntity>()
+                  .map((item) => Album(
+                        browseId: item.id,
+                        title: item.title,
+                        artists: [
+                          {'name': item.artist}
+                        ],
+                        thumbnailUrl: item.thumbnailUrl,
+                      ))
+                  .toList(),
+            );
+          } else if (section.items.every((item) => item is PlaylistEntity)) {
+            return PlaylistContent(
+              title: section.title,
+              playlistList: (section.items as List)
+                  .cast<PlaylistEntity>()
+                  .map((item) => Playlist(
+                        playlistId: item.id,
+                        title: item.title,
+                        thumbnailUrl: item.thumbnailUrl,
+                      ))
+                  .toList(),
+            );
+          }
+          return null;
+        })
+        .where((item) => item != null)
+        .toList();
   }
 
   Future<void> changeDiscoverContent(dynamic val, {String? songId}) async {
     try {
       final quickPicksEntity = await _getQuickPicksUseCase(val, songId: songId);
       quickPicks.value = QuickPicks(
-        quickPicksEntity.items.map((track) => MediaItem(id: track.id, title: track.title, artist: track.artist)).toList(),
-        title: quickPicksEntity.title
-      );
+          quickPicksEntity.items
+              .map((track) => MediaItem(
+                  id: track.id, title: track.title, artist: track.artist))
+              .toList(),
+          title: quickPicksEntity.title);
       if (val == "BOLI" && songId != null) {
         Hive.box("AppPrefs").put("recentSongId", songId);
       }
@@ -149,7 +181,8 @@ class HomeScreenController extends GetxController {
 
   String getContentHlCode() {
     const List<String> unsupportedLangIds = ["ia", "ga", "fj", "eo"];
-    final userLangId = Get.find<SettingsScreenController>().currentAppLanguageCode.value;
+    final userLangId =
+        Get.find<SettingsScreenController>().currentAppLanguageCode.value;
     return unsupportedLangIds.contains(userLangId) ? "en" : userLangId;
   }
 
@@ -164,11 +197,15 @@ class HomeScreenController extends GetxController {
   }
 
   void _checkNewVersion() {
-    showVersionDialog.value = Hive.box("AppPrefs").get("newVersionVisibility") ?? true;
+    showVersionDialog.value =
+        Hive.box("AppPrefs").get("newVersionVisibility") ?? true;
     if (showVersionDialog.isTrue) {
-      newVersionCheck(Get.find<SettingsScreenController>().currentVersion).then((value) {
+      newVersionCheck(Get.find<SettingsScreenController>().currentVersion)
+          .then((value) {
         if (value) {
-          showDialog(context: Get.context!, builder: (context) => const NewVersionDialog());
+          showDialog(
+              context: Get.context!,
+              builder: (context) => const NewVersionDialog());
         }
       });
     }
@@ -192,8 +229,12 @@ class HomeScreenController extends GetxController {
         if (isHomeOnTop) {
           playerCon.playerPanelMinHeight.value = 75.0;
         } else {
-          Future.delayed(isResultScreenOnTop ? const Duration(milliseconds: 300) : Duration.zero, () {
-            playerCon.playerPanelMinHeight.value = 75.0 + Get.mediaQuery.viewPadding.bottom;
+          Future.delayed(
+              isResultScreenOnTop
+                  ? const Duration(milliseconds: 300)
+                  : Duration.zero, () {
+            playerCon.playerPanelMinHeight.value =
+                75.0 + Get.mediaQuery.viewPadding.bottom;
           });
         }
       }
@@ -218,5 +259,7 @@ class HomeScreenController extends GetxController {
 
   // TODO: Refactor caching logic to be handled by a use case.
   // This is a temporary stub to prevent breaking other parts of the app.
-  Future<void> cachedHomeScreenData({bool updateAll = false, bool updateQuickPicksNMiddleContent = false}) async {}
+  Future<void> cachedHomeScreenData(
+      {bool updateAll = false,
+      bool updateQuickPicksNMiddleContent = false}) async {}
 }

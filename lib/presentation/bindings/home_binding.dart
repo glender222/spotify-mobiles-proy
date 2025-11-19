@@ -35,7 +35,8 @@ class HomeBinding extends Bindings {
       () => HomeRemoteDataSourceImpl(musicServices: Get.find<MusicServices>()),
     );
     Get.lazyPut<HomeLocalDataSource>(
-      () => HomeLocalDataSourceImpl(activityService: Get.find<ActivityService>(), hive: Get.find<HiveInterface>()),
+      () => HomeLocalDataSourceImpl(
+          activityService: Get.find<ActivityService>(), hive: Hive),
     );
     Get.lazyPut<RecommendationDataSource>(
       () => RecommendationDataSourceImpl(
@@ -52,11 +53,17 @@ class HomeBinding extends Bindings {
       ),
     );
 
-    Get.lazyPut<GetHomePageContentUseCase>(() => GetHomePageContentUseCase(Get.find<HomeRepository>()));
-    Get.lazyPut<GetRecentlyPlayedUseCase>(() => GetRecentlyPlayedUseCase(Get.find<HomeRepository>()));
-    Get.lazyPut<GetRecommendationsUseCase>(() => GetRecommendationsUseCase(Get.find<HomeRepository>()));
-    Get.lazyPut<GetCachedHomeContentUseCase>(() => GetCachedHomeContentUseCase(Get.find<HomeRepository>()));
-    Get.lazyPut<CacheHomeContentUseCase>(() => CacheHomeContentUseCase(Get.find<HomeRepository>()));
-    Get.lazyPut<GetQuickPicksUseCase>(() => GetQuickPicksUseCase(Get.find<HomeRepository>()));
+    Get.lazyPut<GetHomePageContentUseCase>(
+        () => GetHomePageContentUseCase(Get.find<HomeRepository>()));
+    Get.lazyPut<GetRecentlyPlayedUseCase>(
+        () => GetRecentlyPlayedUseCase(Get.find<HomeRepository>()));
+    Get.lazyPut<GetRecommendationsUseCase>(
+        () => GetRecommendationsUseCase(Get.find<HomeRepository>()));
+    Get.lazyPut<GetCachedHomeContentUseCase>(
+        () => GetCachedHomeContentUseCase(Get.find<HomeRepository>()));
+    Get.lazyPut<CacheHomeContentUseCase>(
+        () => CacheHomeContentUseCase(Get.find<HomeRepository>()));
+    Get.lazyPut<GetQuickPicksUseCase>(
+        () => GetQuickPicksUseCase(Get.find<HomeRepository>()));
   }
 }

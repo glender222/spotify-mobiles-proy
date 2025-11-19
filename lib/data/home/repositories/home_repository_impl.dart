@@ -6,6 +6,7 @@ import 'package:harmonymusic/domain/home/entities/quick_picks_entity.dart';
 import 'package:harmonymusic/domain/home/repositories/home_repository.dart';
 import 'package:audio_service/audio_service.dart' show MediaItem;
 import 'package:harmonymusic/data/home/models/home_section_model.dart';
+import 'package:harmonymusic/utils/helper.dart';
 
 class HomeRepositoryImpl implements HomeRepository {
   final HomeRemoteDataSource remoteDataSource;
@@ -22,10 +23,30 @@ class HomeRepositoryImpl implements HomeRepository {
   Future<List<HomeSectionEntity>> getHomeContent() async {
     try {
       final homeSections = await remoteDataSource.getHomeContent();
-      // The models returned by the data source are compatible with the entities.
+      // Cache successful fetch for offline use
+      try {
+        await localDataSource.cacheHomeContent(homeSections);
+      } catch (cacheError) {
+        // Cache failure shouldn't prevent returning data
+        printERROR('Failed to cache home content: $cacheError');
+      }
       return homeSections;
     } catch (e) {
-      throw Exception('Failed to get home content from repository.');
+      // Network failed - try to return cached content
+      printERROR('Failed to fetch home content from network: $e');
+      printINFO('Attempting to load cached home content...');
+      try {
+        final cachedContent = await localDataSource.getCachedHomeContent();
+        if (cachedContent.isNotEmpty) {
+          printINFO('Loaded ${cachedContent.length} sections from cache');
+          return cachedContent;
+        }
+      } catch (cacheError) {
+        printERROR('Failed to load cached content: $cacheError');
+      }
+      // Both network and cache failed - rethrow for controller to handle
+      throw Exception(
+          'Unable to load home content. Please check your internet connection and try again.');
     }
   }
 
@@ -52,7 +73,8 @@ class HomeRepositoryImpl implements HomeRepository {
   }
 
   @override
-  Future<QuickPicksEntity> getQuickPicks(String contentType, {String? songId}) async {
+  Future<QuickPicksEntity> getQuickPicks(String contentType,
+      {String? songId}) async {
     return remoteDataSource.getQuickPicks(contentType, songId: songId);
   }
 }
