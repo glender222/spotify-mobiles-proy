@@ -7,8 +7,8 @@ import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../domain/download/usecases/download_song_usecase.dart';
-import '../screens/Playlist/playlist_screen_controller.dart';
-import '../screens/Settings/settings_screen_controller.dart';
+import '../../presentation/controllers/playlist/playlist_controller.dart';
+import '../../presentation/controllers/settings/settings_controller.dart';
 import '/utils/helper.dart';
 import '/services/piped_service.dart';
 import '/ui/widgets/sleep_timer_bottom_sheet.dart';
@@ -227,7 +227,7 @@ class SongInfoBottomSheet extends StatelessWidget {
                             .then((value) async {
                           box.delete(song.id).then((value) {
                             if (playlist != null) {
-                              Get.find<PlaylistScreenController>(
+                              Get.find<PlaylistController>(
                                       tag: Key(playlist!.playlistId)
                                           .hashCode
                                           .toString())
@@ -388,7 +388,7 @@ class SongInfoController extends GetxController
         ? box.put(song.id, MediaItemBuilder.toJson(song))
         : box.delete(song.id);
     isCurrentSongFav.value = !isCurrentSongFav.value;
-    if (Get.find<SettingsScreenController>()
+    if (Get.find<SettingsController>()
             .autoDownloadFavoriteSongEnabled
             .isTrue &&
         isCurrentSongFav.isTrue) {
@@ -421,7 +421,7 @@ mixin RemoveSongFromPlaylistMixin {
 
     // this try catch block is to handle the case when song is removed from libsongs sections
     try {
-      final plstCntroller = Get.find<PlaylistScreenController>(
+      final plstCntroller = Get.find<PlaylistController>(
           tag: Key(playlist.playlistId).hashCode.toString());
       if (playlist.isPipedPlaylist) {
         final res = await Get.find<PipedServices>()

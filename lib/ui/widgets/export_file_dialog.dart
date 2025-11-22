@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:harmonymusic/ui/screens/Settings/settings_screen_controller.dart';
+import 'package:harmonymusic/presentation/controllers/settings/settings_controller.dart';
 import 'package:harmonymusic/ui/widgets/loader.dart';
 
 import '../../services/permission_service.dart';
@@ -125,7 +125,7 @@ class ExportFileDialogController extends GetxController {
   }
 
   Future<void> scanFilesToExport() async {
-    final supportDirPath = Get.find<SettingsScreenController>().supportDirPath;
+    final supportDirPath = Get.find<SettingsController>().supportDirPath;
     final filesEntityList =
         Directory("$supportDirPath/Music").listSync(recursive: false);
     final filesPath = filesEntityList.map((entity) => entity.path).toList();
@@ -142,7 +142,7 @@ class ExportFileDialogController extends GetxController {
     exportProgress.value = 0;
     exportRunning.value = true;
     final exportDirPath =
-        Get.find<SettingsScreenController>().exportLocationPath.toString();
+        Get.find<SettingsController>().exportLocationPath.toString();
     final length_ = filesToExport.length;
     for (int i = 0; i < length_; i++) {
       final filePath = filesToExport[i];

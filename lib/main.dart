@@ -16,9 +16,9 @@ import '/services/audio_handler.dart';
 import '/services/music_service.dart';
 import '/ui/home.dart';
 import '/ui/player/player_controller.dart';
-import 'ui/screens/Settings/settings_screen_controller.dart';
+import 'presentation/controllers/settings/settings_controller.dart';
 import '/ui/utils/theme_controller.dart';
-import 'ui/screens/Home/home_screen_controller.dart';
+import 'presentation/controllers/home/home_controller.dart';
 import 'ui/screens/Library/library_controller.dart';
 import 'utils/system_tray.dart';
 import 'utils/update_check_flag_file.dart';
@@ -104,6 +104,17 @@ import 'domain/download/usecases/cancel_playlist_download_usecase.dart';
 import 'domain/download/usecases/download_playlist_usecase.dart';
 import 'domain/download/usecases/get_current_playlist_id_usecase.dart';
 import 'domain/download/usecases/get_playlist_downloading_progress_usecase.dart';
+
+// Album module imports
+import 'domain/album/repositories/album_repository.dart';
+import 'data/album/repositories/album_repository_impl.dart';
+import 'data/album/datasources/album_remote_data_source.dart';
+import 'data/album/datasources/album_local_data_source.dart';
+import 'domain/album/usecases/get_album_details_usecase.dart';
+import 'domain/album/usecases/get_album_tracks_usecase.dart';
+import 'domain/album/usecases/add_album_to_library_usecase.dart';
+import 'domain/album/usecases/remove_album_from_library_usecase.dart';
+import 'domain/album/usecases/is_album_in_library_usecase.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -191,7 +202,7 @@ Future<void> startApplicationServices() async {
   // UI Controllers
   Get.lazyPut(() => ThemeController(), fenix: true);
   Get.lazyPut(() => PlayerController(), fenix: true);
-  Get.lazyPut(() => HomeScreenController(), fenix: true);
+  Get.lazyPut(() => HomeController(), fenix: true);
   Get.lazyPut(() => LibrarySongsController(), fenix: true);
   Get.lazyPut(() => LibraryPlaylistsController(), fenix: true);
   Get.lazyPut(() => LibraryAlbumsController(), fenix: true);
@@ -278,11 +289,38 @@ Future<void> startApplicationServices() async {
   Get.lazyPut(() => GetCurrentPlaylistIdUseCase(), fenix: true);
   Get.lazyPut(() => GetPlaylistDownloadingProgressUseCase(), fenix: true);
 
+  // Album Module - Data Sources
+  Get.lazyPut<AlbumRemoteDataSource>(
+      () => AlbumRemoteDataSourceImpl(Get.find<MusicServices>()),
+      fenix: true);
+  Get.lazyPut<AlbumLocalDataSource>(() => AlbumLocalDataSourceImpl(Hive),
+      fenix: true);
+
+  // Album Module - Repository
+  Get.lazyPut<AlbumRepository>(
+      () => AlbumRepositoryImpl(
+            remoteDataSource: Get.find<AlbumRemoteDataSource>(),
+            localDataSource: Get.find<AlbumLocalDataSource>(),
+          ),
+      fenix: true);
+
+  // Album Module - UseCases
+  Get.lazyPut(() => GetAlbumDetailsUseCase(Get.find<AlbumRepository>()),
+      fenix: true);
+  Get.lazyPut(() => GetAlbumTracksUseCase(Get.find<AlbumRepository>()),
+      fenix: true);
+  Get.lazyPut(() => AddAlbumToLibraryUseCase(Get.find<AlbumRepository>()),
+      fenix: true);
+  Get.lazyPut(() => RemoveAlbumFromLibraryUseCase(Get.find<AlbumRepository>()),
+      fenix: true);
+  Get.lazyPut(() => IsAlbumInLibraryUseCase(Get.find<AlbumRepository>()),
+      fenix: true);
+
   // Settings Controller (depends on UseCases)
-  Get.lazyPut(() => SettingsScreenController(), fenix: true);
+  Get.lazyPut(() => SettingsController(), fenix: true);
 
   if (GetPlatform.isDesktop) {
-    Get.lazyPut(() => SearchScreenController(), fenix: true);
+    Get.lazyPut(() => SearchController(), fenix: true);
     Get.put(DesktopSystemTray());
   }
 }

@@ -2,22 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '/ui/screens/Search/search_result_screen_v2.dart';
-import '/ui/screens/Settings/settings_screen_controller.dart';
+import '/presentation/controllers/settings/settings_controller.dart';
 import '../../navigator.dart';
 import '../../widgets/animated_screen_transition.dart';
 import '../../widgets/loader.dart';
 import '../../widgets/search_related_widgets.dart';
 import '../../widgets/separate_tab_item_widget.dart';
-import 'search_result_screen_controller.dart';
+import '../../../presentation/controllers/search/search_result_controller.dart';
 
 class SearchResultScreen extends StatelessWidget {
   const SearchResultScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final searchResScrController = Get.put(SearchResultScreenController());
+    final searchResScrController = Get.put(SearchResultController());
     return GetPlatform.isDesktop ||
-            Get.find<SettingsScreenController>().isBottomNavBarEnabled.isTrue
+            Get.find<SettingsController>().isBottomNavBarEnabled.isTrue
         ? const SearchResultScreenBN()
         : Scaffold(
             body: Row(
@@ -77,9 +77,9 @@ class SearchResultScreen extends StatelessWidget {
                   ),
                 ),
                 Expanded(
-                  child: GetX<SearchResultScreenController>(
+                  child: GetX<SearchResultController>(
                     builder: (controller) => AnimatedScreenTransition(
-                      enabled: Get.find<SettingsScreenController>()
+                      enabled: Get.find<SettingsController>()
                           .isTransitionAnimationDisabled
                           .isFalse,
                       resverse: controller.isTabTransitionReversed,
@@ -113,7 +113,7 @@ class Body extends StatelessWidget {
     required this.searchResScrController,
   });
 
-  final SearchResultScreenController searchResScrController;
+  final SearchResultController searchResScrController;
 
   @override
   Widget build(BuildContext context) {

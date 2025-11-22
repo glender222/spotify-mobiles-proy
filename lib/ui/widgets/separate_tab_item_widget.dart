@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:harmonymusic/ui/widgets/modification_list.dart';
 
-import '../screens/Artists/artist_screen_controller.dart';
+import '../../../presentation/controllers/artist/artist_controller.dart';
 import '../screens/Search/search_result_screen_controller.dart';
 import 'list_widget.dart';
 import 'loader.dart';
@@ -33,8 +33,8 @@ class SeparateTabItemWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final artistController =
-        Get.isRegistered<ArtistScreenController>(tag: artistControllerTag)
-            ? Get.find<ArtistScreenController>(tag: artistControllerTag)
+        Get.isRegistered<ArtistController>(tag: artistControllerTag)
+            ? Get.find<ArtistController>(tag: artistControllerTag)
             : null;
     final searchResController = Get.isRegistered<SearchResultScreenController>()
         ? Get.find<SearchResultScreenController>()
@@ -74,7 +74,7 @@ class SeparateTabItemWidget extends StatelessWidget {
                     isSearchFeatureRequired: artistController != null,
                     titleLeftPadding: 9,
                     itemCountTitle:
-                        "${isResultWidget ? (searchResController?.separatedResultContent[title] ?? []).length : (artistController?.sepataredContent[title] != null ? artistController?.sepataredContent[title]['results'] : []).length} ${"items".tr}",
+                        "${isResultWidget ? (searchResController?.separatedResultContent[title] ?? []).length : (artistController?.separatedContent[title] != null ? artistController?.separatedContent[title]['results'] : []).length} ${"items".tr}",
                     requiredSortTypes: buildSortTypeSet(
                         title == 'Albums' || title == "Singles",
                         title == "Songs" || title == "Videos"),
@@ -110,7 +110,7 @@ class SeparateTabItemWidget extends StatelessWidget {
                             child: Center(child: LoadingIndicator()));
                       }
                     })
-                  : (artistController!.isArtistContentFetced.isTrue
+                  : (artistController!.isArtistContentFetched.isTrue
                       ? Obx(() =>
                           (artistController.additionalOperationMode.value ==
                                   OperationMode.none

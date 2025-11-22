@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../screens/Home/home_screen_controller.dart';
+import '../../presentation/controllers/home/home_controller.dart';
 import 'common_dialog_widget.dart';
 
 class NewVersionDialog extends StatelessWidget {
@@ -46,7 +46,7 @@ class NewVersionDialog extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  GetX<HomeScreenController>(builder: (controller) {
+                  GetX<HomeController>(builder: (controller) {
                     return Checkbox(
                         value: controller.showVersionDialog.isFalse,
                         onChanged: (val) {

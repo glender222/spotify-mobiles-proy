@@ -15,8 +15,8 @@ import '../../../models/media_Item_builder.dart';
 import '../../../models/playlist.dart';
 import '../../../services/piped_service.dart';
 import '../../../services/activity_service.dart';
-import '../Home/home_screen_controller.dart';
-import '../Library/library_controller.dart';
+import '../home/home_controller.dart';
+import '../../../ui/screens/Library/library_controller.dart';
 import '../../../domain/playlist/entities/playlist_entity.dart';
 import '../../../domain/playlist/entities/track_entity.dart';
 import '../../../domain/playlist/usecases/save_playlist_usecase.dart';
@@ -26,14 +26,19 @@ import '../../../domain/playlist/usecases/update_local_playlist_usecase.dart';
 import '../../../domain/playlist/usecases/export_playlist_usecase.dart';
 import '../../../domain/playlist/entities/export_type.dart';
 
-class PlaylistScreenController extends PlaylistAlbumScreenControllerBase
+class PlaylistController extends PlaylistAlbumScreenControllerBase
     with AdditionalOpeartionMixin, GetSingleTickerProviderStateMixin {
   final ActivityService _activityService = Get.find<ActivityService>();
-  final SavePlaylistUseCase _savePlaylistUseCase = Get.find<SavePlaylistUseCase>();
-  final RemovePlaylistUseCase _removePlaylistUseCase = Get.find<RemovePlaylistUseCase>();
-  final GetOnlinePlaylistDetailsUseCase _getOnlinePlaylistDetailsUseCase = Get.find<GetOnlinePlaylistDetailsUseCase>();
-  final UpdateLocalPlaylistUseCase _updateLocalPlaylistUseCase = Get.find<UpdateLocalPlaylistUseCase>();
-  final ExportPlaylistUseCase _exportPlaylistUseCase = Get.find<ExportPlaylistUseCase>();
+  final SavePlaylistUseCase _savePlaylistUseCase =
+      Get.find<SavePlaylistUseCase>();
+  final RemovePlaylistUseCase _removePlaylistUseCase =
+      Get.find<RemovePlaylistUseCase>();
+  final GetOnlinePlaylistDetailsUseCase _getOnlinePlaylistDetailsUseCase =
+      Get.find<GetOnlinePlaylistDetailsUseCase>();
+  final UpdateLocalPlaylistUseCase _updateLocalPlaylistUseCase =
+      Get.find<UpdateLocalPlaylistUseCase>();
+  final ExportPlaylistUseCase _exportPlaylistUseCase =
+      Get.find<ExportPlaylistUseCase>();
 
   final playlist = Playlist(
     title: "",
@@ -60,28 +65,36 @@ class PlaylistScreenController extends PlaylistAlbumScreenControllerBase
       vsync: this,
       duration: const Duration(milliseconds: 400),
     );
-    _scaleAnimation = Tween<double>(begin: 0, end: 1.0).animate(animationController);
-    _heightAnimation = Tween<double>(begin: 10.0, end: 75.0).animate(CurvedAnimation(parent: animationController, curve: Curves.easeOutBack));
+    _scaleAnimation =
+        Tween<double>(begin: 0, end: 1.0).animate(animationController);
+    _heightAnimation = Tween<double>(begin: 10.0, end: 75.0).animate(
+        CurvedAnimation(
+            parent: animationController, curve: Curves.easeOutBack));
 
     final args = Get.arguments as List;
     final Playlist? playlist = args[0];
     final playlistId = args[1];
     fetchPlaylistDetails(playlist, playlistId);
-    Future.delayed(const Duration(milliseconds: 200), () => Get.find<HomeScreenController>().whenHomeScreenOnTop());
+    Future.delayed(const Duration(milliseconds: 200),
+        () => Get.find<HomeController>().whenHomeScreenOnTop());
   }
 
   @override
   void fetchPlaylistDetails(Playlist? playlist_, String playlistId) async {
     final isIdOnly = playlist_ == null;
     final isPipedPlaylist = playlist_?.isPipedPlaylist ?? false;
-    isDefaultPlaylist.value = (playlistId == "SongDownloads" || playlistId == "SongsCache" || playlistId == "LIBRP" || playlistId == "LIBFAV");
+    isDefaultPlaylist.value = (playlistId == "SongDownloads" ||
+        playlistId == "SongsCache" ||
+        playlistId == "LIBRP" ||
+        playlistId == "LIBFAV");
 
     if (!isIdOnly && !playlist_.isCloudPlaylist) {
       playlist.value = playlist_;
       _animationController.forward();
       fetchSongsfromDatabase(playlistId);
       isContentFetched.value = true;
-      Future.delayed(const Duration(seconds: 1), () => _updatePlaylistThumbSongBased());
+      Future.delayed(
+          const Duration(seconds: 1), () => _updatePlaylistThumbSongBased());
       return;
     }
 
@@ -109,7 +122,8 @@ class PlaylistScreenController extends PlaylistAlbumScreenControllerBase
     }
   }
 
-  Future<void> _fetchSongOnline(String id, bool isIdOnly, bool isPipedPlaylist) async {
+  Future<void> _fetchSongOnline(
+      String id, bool isIdOnly, bool isPipedPlaylist) async {
     isContentFetched.value = false;
 
     if (isPipedPlaylist) {
@@ -128,14 +142,18 @@ class PlaylistScreenController extends PlaylistAlbumScreenControllerBase
       thumbnailUrl: playlistEntity.thumbnailUrl,
     );
 
-    final mediaItems = playlistEntity.tracks.map((track) => MediaItem(
-      id: track.id,
-      title: track.title,
-      artist: track.artist,
-      album: track.album,
-      artUri: track.thumbnailUrl != null ? Uri.parse(track.thumbnailUrl!) : null,
-      duration: track.duration,
-    )).toList();
+    final mediaItems = playlistEntity.tracks
+        .map((track) => MediaItem(
+              id: track.id,
+              title: track.title,
+              artist: track.artist,
+              album: track.album,
+              artUri: track.thumbnailUrl != null
+                  ? Uri.parse(track.thumbnailUrl!)
+                  : null,
+              duration: track.duration,
+            ))
+        .toList();
 
     if (isIdOnly) {
       playlist.value = legacyPlaylist;
@@ -166,7 +184,8 @@ class PlaylistScreenController extends PlaylistAlbumScreenControllerBase
   Future<bool> addNremoveFromLibrary(dynamic content, {bool add = true}) async {
     try {
       if (content.isPipedPlaylist && !add) {
-        final res = await Get.find<PipedServices>().deletePlaylist(content.playlistId);
+        final res =
+            await Get.find<PipedServices>().deletePlaylist(content.playlistId);
         Get.find<LibraryPlaylistsController>().syncPipedPlaylist();
         return (res.code == 1);
       }
@@ -174,14 +193,16 @@ class PlaylistScreenController extends PlaylistAlbumScreenControllerBase
       final id = content.playlistId;
 
       if (add) {
-        final tracks = songList.map((mediaItem) => TrackEntity(
-          id: mediaItem.id,
-          title: mediaItem.title,
-          artist: mediaItem.artist ?? 'Unknown Artist',
-          album: mediaItem.album,
-          thumbnailUrl: mediaItem.artUri?.toString(),
-          duration: mediaItem.duration,
-        )).toList();
+        final tracks = songList
+            .map((mediaItem) => TrackEntity(
+                  id: mediaItem.id,
+                  title: mediaItem.title,
+                  artist: mediaItem.artist ?? 'Unknown Artist',
+                  album: mediaItem.album,
+                  thumbnailUrl: mediaItem.artUri?.toString(),
+                  duration: mediaItem.duration,
+                ))
+            .toList();
 
         final playlistEntity = PlaylistEntity(
           id: content.playlistId,
@@ -230,14 +251,16 @@ class PlaylistScreenController extends PlaylistAlbumScreenControllerBase
     final songIdsToRemove = songs.map((s) => s.id).toSet();
     songList.removeWhere((song) => songIdsToRemove.contains(song.id));
 
-    final updatedTracks = songList.map((mediaItem) => TrackEntity(
-      id: mediaItem.id,
-      title: mediaItem.title,
-      artist: mediaItem.artist ?? 'Unknown Artist',
-      album: mediaItem.album,
-      thumbnailUrl: mediaItem.artUri?.toString(),
-      duration: mediaItem.duration,
-    )).toList();
+    final updatedTracks = songList
+        .map((mediaItem) => TrackEntity(
+              id: mediaItem.id,
+              title: mediaItem.title,
+              artist: mediaItem.artist ?? 'Unknown Artist',
+              album: mediaItem.album,
+              thumbnailUrl: mediaItem.artUri?.toString(),
+              duration: mediaItem.duration,
+            ))
+        .toList();
 
     final playlistEntity = PlaylistEntity(
       id: playlist.value.playlistId,
@@ -257,7 +280,8 @@ class PlaylistScreenController extends PlaylistAlbumScreenControllerBase
     }
   }
 
-  void addNRemoveItemsinList(MediaItem? item, {required String action, int? index}) {
+  void addNRemoveItemsinList(MediaItem? item,
+      {required String action, int? index}) {
     if (action == 'add') {
       index != null ? songList.insert(index, item!) : songList.add(item!);
     } else {
@@ -270,33 +294,39 @@ class PlaylistScreenController extends PlaylistAlbumScreenControllerBase
   }
 
   @override
-  void fetchAlbumDetails(Album? album_,String albumId) {}
+  void fetchAlbumDetails(Album? album_, String albumId) {}
 
   void _updatePlaylistThumbSongBased() {
     final currentPlaylist = playlist.value;
     if (isDefaultPlaylist.isTrue || currentPlaylist.isCloudPlaylist) return;
     Playlist updatedplaylist;
     if (songList.isNotEmpty) {
-      updatedplaylist = currentPlaylist.copyWith(thumbnailUrl: songList[0].artUri.toString());
+      updatedplaylist =
+          currentPlaylist.copyWith(thumbnailUrl: songList[0].artUri.toString());
     } else {
-      updatedplaylist = currentPlaylist.copyWith(thumbnailUrl: Playlist.thumbPlaceholderUrl);
+      updatedplaylist =
+          currentPlaylist.copyWith(thumbnailUrl: Playlist.thumbPlaceholderUrl);
     }
-    if (Thumbnail(currentPlaylist.thumbnailUrl).extraHigh == Thumbnail(updatedplaylist.thumbnailUrl).extraHigh) return;
+    if (Thumbnail(currentPlaylist.thumbnailUrl).extraHigh ==
+        Thumbnail(updatedplaylist.thumbnailUrl).extraHigh) return;
     playlist.value = updatedplaylist;
-    Get.find<LibraryPlaylistsController>().updatePlaylistIntoDb(updatedplaylist);
+    Get.find<LibraryPlaylistsController>()
+        .updatePlaylistIntoDb(updatedplaylist);
   }
 
   @override
   void onClose() {
     _animationController.dispose();
-    Get.find<HomeScreenController>().whenHomeScreenOnTop();
+    Get.find<HomeController>().whenHomeScreenOnTop();
     super.onClose();
   }
 
   Future<void> exportPlaylist(BuildContext context, ExportType format) async {
     if (!await PermissionService.getExtStoragePermission()) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(snackbar(context, "permissionDenied".tr, size: SanckBarSize.MEDIUM));
+        ScaffoldMessenger.of(context).showSnackBar(snackbar(
+            context, "permissionDenied".tr,
+            size: SanckBarSize.MEDIUM));
       }
       return;
     }
@@ -309,8 +339,9 @@ class PlaylistScreenController extends PlaylistAlbumScreenControllerBase
       }
 
       // Business logic is now in the use case
-      final filePath = await _exportPlaylistUseCase(playlistId: playlist.value.playlistId, format: format);
-      
+      final filePath = await _exportPlaylistUseCase(
+          playlistId: playlist.value.playlistId, format: format);
+
       exportProgress.value = 1.0;
       if (Get.isDialogOpen ?? false) {
         Get.back();
@@ -319,7 +350,9 @@ class PlaylistScreenController extends PlaylistAlbumScreenControllerBase
       final dir = Directory(filePath).parent;
       String locationMsg = _getLocationMessage(dir.path);
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(snackbar(context, "${"playlistExportedMsg".tr}: $locationMsg", size: SanckBarSize.MEDIUM));
+        ScaffoldMessenger.of(context).showSnackBar(snackbar(
+            context, "${"playlistExportedMsg".tr}: $locationMsg",
+            size: SanckBarSize.MEDIUM));
       }
     } catch (e) {
       if (Get.isDialogOpen ?? false) {
@@ -327,7 +360,8 @@ class PlaylistScreenController extends PlaylistAlbumScreenControllerBase
       }
       printERROR("Error exporting playlist: $e");
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(snackbar(context, "exportError".tr, size: SanckBarSize.MEDIUM));
+        ScaffoldMessenger.of(context).showSnackBar(
+            snackbar(context, "exportError".tr, size: SanckBarSize.MEDIUM));
       }
     } finally {
       isExporting.value = false;
@@ -358,11 +392,14 @@ class PlaylistScreenController extends PlaylistAlbumScreenControllerBase
               children: [
                 LinearProgressIndicator(
                   value: exportProgress.value,
-                  backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
-                  valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).colorScheme.secondary),
+                  backgroundColor:
+                      Theme.of(context).colorScheme.surfaceContainerHighest,
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                      Theme.of(context).colorScheme.secondary),
                 ),
                 const SizedBox(height: 16),
-                Text("${(exportProgress.value * 100).toInt()}%", style: Theme.of(context).textTheme.bodyMedium),
+                Text("${(exportProgress.value * 100).toInt()}%",
+                    style: Theme.of(context).textTheme.bodyMedium),
               ],
             )),
       ),

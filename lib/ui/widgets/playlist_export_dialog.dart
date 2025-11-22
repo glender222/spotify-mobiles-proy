@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:html/parser.dart' as html_parser;
 
-import '/ui/screens/Playlist/playlist_screen_controller.dart';
+import '/presentation/controllers/playlist/playlist_controller.dart';
 import '../../domain/playlist/entities/export_type.dart';
 import 'common_dialog_widget.dart';
 import 'snackbar.dart';
@@ -17,7 +17,7 @@ class PlaylistExportDialog extends StatelessWidget {
     required this.parentContext,
   });
 
-  final PlaylistScreenController controller;
+  final PlaylistController controller;
   final BuildContext parentContext;
 
   @override

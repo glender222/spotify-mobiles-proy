@@ -8,7 +8,7 @@ import 'library_controller.dart';
 import '../../widgets/content_list_widget_item.dart';
 import '../../widgets/list_widget.dart';
 import '../../widgets/sort_widget.dart';
-import '../Settings/settings_screen_controller.dart';
+import '../../../presentation/controllers/settings/settings_controller.dart';
 
 class SongsLibraryWidget extends StatelessWidget {
   const SongsLibraryWidget({super.key, this.isBottomNavActive = false});
@@ -104,7 +104,7 @@ class PlaylistNAlbumLibraryWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final libralbumCntrller = Get.find<LibraryAlbumsController>();
     final librplstCntrller = Get.find<LibraryPlaylistsController>();
-    final settingscrnController = Get.find<SettingsScreenController>();
+    final settingscrnController = Get.find<SettingsController>();
     final size = MediaQuery.of(context).size;
 
     const double itemHeight = 180;

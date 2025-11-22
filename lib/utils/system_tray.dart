@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:audio_service/audio_service.dart';
 import 'package:get/get.dart';
 import 'package:harmonymusic/ui/player/player_controller.dart';
-import 'package:harmonymusic/ui/screens/Settings/settings_screen_controller.dart';
+import 'package:harmonymusic/presentation/controllers/settings/settings_controller.dart';
 import 'package:tray_manager/tray_manager.dart';
 import 'package:window_manager/window_manager.dart';
 
@@ -111,7 +111,7 @@ class DesktopSystemTray extends GetxService with TrayListener {
 class CloseWindowListener extends WindowListener {
   @override
   Future<void> onWindowClose() async {
-    final settingsScrnController = Get.find<SettingsScreenController>();
+    final settingsScrnController = Get.find<SettingsController>();
     if (settingsScrnController.backgroundPlayEnabled.isTrue &&
         Get.find<PlayerController>().buttonState.value ==
             PlayButtonState.playing) {

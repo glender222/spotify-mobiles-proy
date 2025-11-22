@@ -15,7 +15,7 @@ import '../../widgets/snackbar.dart';
 import '../../widgets/song_list_tile.dart';
 import '../../widgets/songinfo_bottom_sheet.dart';
 import '../../widgets/sort_widget.dart';
-import 'album_screen_controller.dart';
+import '../../../presentation/controllers/album/album_controller.dart';
 
 class AlbumScreen extends StatelessWidget {
   const AlbumScreen({super.key});
@@ -23,9 +23,7 @@ class AlbumScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tag = key.hashCode.toString();
-    final albumController = (Get.isRegistered<AlbumScreenController>(tag: tag))
-        ? Get.find<AlbumScreenController>(tag: tag)
-        : Get.put(AlbumScreenController(), tag: tag);
+    final albumController = Get.find<AlbumController>();
     final size = MediaQuery.of(context).size;
     final playerController = Get.find<PlayerController>();
     final landscape = size.width > size.height;
@@ -190,7 +188,7 @@ class AlbumScreen extends StatelessWidget {
                                         children: [
                                           // Bookmark button
                                           Obx(() => IconButton(
-                                            tooltip: albumController
+                                              tooltip: albumController
                                                       .isAddedToLibrary.isFalse
                                                   ? "addToLibrary".tr
                                                   : "removeFromLibrary".tr,
@@ -227,7 +225,7 @@ class AlbumScreen extends StatelessWidget {
                                                   : Icons.bookmark_added))),
                                           // Play button
                                           IconButton(
-                                            tooltip: "play".tr,
+                                              tooltip: "play".tr,
                                               onPressed: () {
                                                 playerController
                                                     .playPlayListSong(
@@ -254,7 +252,7 @@ class AlbumScreen extends StatelessWidget {
                                               )),
                                           // Enqueue button
                                           IconButton(
-                                            tooltip: "enqueueAlbumSongs".tr,
+                                              tooltip: "enqueueAlbumSongs".tr,
                                               onPressed: () {
                                                 Get.find<PlayerController>()
                                                     .enqueueSongList(
@@ -363,7 +361,7 @@ class AlbumScreen extends StatelessWidget {
                                           //           Icons.cloud_sync)),
 
                                           IconButton(
-                                            tooltip: "shareAlbum".tr,
+                                              tooltip: "shareAlbum".tr,
                                               visualDensity:
                                                   const VisualDensity(
                                                       vertical: -3),
@@ -475,7 +473,7 @@ class AlbumScreen extends StatelessWidget {
   }
 
   Widget buildTitleSubTitle(
-      BuildContext context, AlbumScreenController albumController) {
+      BuildContext context, AlbumController albumController) {
     final title = albumController.album.value.title;
     final description = albumController.album.value.description;
     final artists =

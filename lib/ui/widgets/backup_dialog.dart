@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
 
-import '/ui/screens/Settings/settings_screen_controller.dart';
+import '/presentation/controllers/settings/settings_controller.dart';
 import '/ui/widgets/loader.dart';
 import '/utils/helper.dart';
 import '../../services/permission_service.dart';
@@ -169,10 +169,10 @@ class BackupDialogController extends GetxController {
   final backupRunning = false.obs;
   final isDownloadedfilesSeclected = false.obs;
   List<String> filesToExport = [];
-  final supportDirPath = Get.find<SettingsScreenController>().supportDirPath;
+  final supportDirPath = Get.find<SettingsController>().supportDirPath;
 
   Future<void> scanFilesToBackup() async {
-    final dbDir = await Get.find<SettingsScreenController>().dbDir;   // error en dbDir  isnt defined for the type settingscontroller etc
+    final dbDir = await Get.find<SettingsController>().dbDir;   // error en dbDir  isnt defined for the type settingscontroller etc
     filesToExport.addAll(await processDirectoryInIsolate(dbDir));
     if (isDownloadedfilesSeclected.value) {
       List<String> downlodedSongFilePaths = Hive.box("SongDownloads")

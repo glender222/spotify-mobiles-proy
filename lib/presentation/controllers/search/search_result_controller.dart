@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:harmonymusic/ui/screens/Settings/settings_screen_controller.dart';
+import 'package:harmonymusic/presentation/controllers/settings/settings_controller.dart';
 
 import '../../../domain/search/usecases/get_search_continuation_usecase.dart';
 import '../../../domain/search/usecases/search_usecase.dart';
 import '../../../utils/helper.dart';
-import '../Home/home_screen_controller.dart';
+import '../home/home_controller.dart';
 import '/ui/widgets/sort_widget.dart';
 
-class SearchResultScreenController extends GetxController
+class SearchResultController extends GetxController
     with GetTickerProviderStateMixin {
   final navigationRailCurrentIndex = 0.obs;
   final isResultContentFetced = false.obs;
@@ -16,7 +16,8 @@ class SearchResultScreenController extends GetxController
   final resultContent = <String, dynamic>{}.obs;
   final separatedResultContent = <String, dynamic>{}.obs;
   final _searchUseCase = Get.find<SearchUseCase>();
-  final _getSearchContinuationUseCase = Get.find<GetSearchContinuationUseCase>();
+  final _getSearchContinuationUseCase =
+      Get.find<GetSearchContinuationUseCase>();
   final queryString = ''.obs;
   final railItems = <String>[].obs;
   final railitemHeight = Get.size.height.obs;
@@ -30,7 +31,7 @@ class SearchResultScreenController extends GetxController
   @override
   void onReady() {
     _getInitSearchResult();
-    Get.find<HomeScreenController>().whenHomeScreenOnTop();
+    Get.find<HomeController>().whenHomeScreenOnTop();
     super.onReady();
   }
 
@@ -55,7 +56,9 @@ class SearchResultScreenController extends GetxController
       final tabName = railItems[value - 1];
       final itemCount = (tabName == 'Songs' || tabName == 'Videos') ? 25 : 10;
       final x = await _searchUseCase(queryString.value,
-          filter: tabName.replaceAll(" ", "_").toLowerCase(), limit: itemCount, filterParams: resultContent['searchEndpoint'][tabName]);
+          filter: tabName.replaceAll(" ", "_").toLowerCase(),
+          limit: itemCount,
+          filterParams: resultContent['searchEndpoint'][tabName]);
       separatedResultContent[tabName] = x[tabName];
       additionalParamNext[tabName] = x['params'];
       isSeparatedResultContentFetced.value = true;
@@ -80,8 +83,7 @@ class SearchResultScreenController extends GetxController
   Future<void> getContinuationContents() async {
     final tabName = railItems[navigationRailCurrentIndex.value - 1];
 
-    final x =
-        await _getSearchContinuationUseCase(additionalParamNext[tabName]);
+    final x = await _getSearchContinuationUseCase(additionalParamNext[tabName]);
     (separatedResultContent[tabName]).addAll(x[tabName]);
     additionalParamNext[tabName] = x['params'];
     separatedResultContent.refresh();
@@ -121,7 +123,7 @@ class SearchResultScreenController extends GetxController
 
       //Case if bottom nav used
       if (GetPlatform.isDesktop ||
-          Get.find<SettingsScreenController>().isBottomNavBarEnabled.isTrue) {
+          Get.find<SettingsController>().isBottomNavBarEnabled.isTrue) {
         // assiging init val
         for (var element in railItems) {
           separatedResultContent[element] = [];
@@ -169,7 +171,7 @@ class SearchResultScreenController extends GetxController
     for (String item in railItems) {
       (scrollControllers[item])!.dispose();
     }
-    Get.find<HomeScreenController>().whenHomeScreenOnTop();
+    Get.find<HomeController>().whenHomeScreenOnTop();
     tabController?.dispose();
     super.onClose();
   }

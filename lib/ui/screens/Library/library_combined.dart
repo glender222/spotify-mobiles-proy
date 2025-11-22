@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '/ui/screens/Settings/settings_screen_controller.dart';
+import '/presentation/controllers/settings/settings_controller.dart';
 import '/ui/widgets/piped_sync_widget.dart';
 import '../../widgets/create_playlist_dialog.dart';
 import 'library.dart';
@@ -12,7 +12,7 @@ class CombinedLibrary extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tabCon = Get.put(CombinedLibraryController());
-    final settingscrnController = Get.find<SettingsScreenController>();
+    final settingscrnController = Get.find<SettingsController>();
 
     return Scaffold(
       appBar: AppBar(

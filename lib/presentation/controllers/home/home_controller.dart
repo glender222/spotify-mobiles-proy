@@ -14,13 +14,13 @@ import '../../../utils/helper.dart';
 import '/models/album.dart';
 import '/models/playlist.dart';
 import '/models/quick_picks.dart';
-import '../Settings/settings_screen_controller.dart';
+import '../settings/settings_controller.dart';
 import '/ui/widgets/new_version_dialog.dart';
 import '/ui/player/player_controller.dart';
 import '../../../domain/home/entities/album_entity.dart';
 import '../../../domain/playlist/entities/playlist_entity.dart';
 
-class HomeScreenController extends GetxController {
+class HomeController extends GetxController {
   final GetHomePageContentUseCase _getHomePageContentUseCase =
       Get.find<GetHomePageContentUseCase>();
   final GetRecentlyPlayedUseCase _getRecentlyPlayedUseCase =
@@ -180,7 +180,7 @@ class HomeScreenController extends GetxController {
   String getContentHlCode() {
     const List<String> unsupportedLangIds = ["ia", "ga", "fj", "eo"];
     final userLangId =
-        Get.find<SettingsScreenController>().currentAppLanguageCode.value;
+        Get.find<SettingsController>().currentAppLanguageCode.value;
     return unsupportedLangIds.contains(userLangId) ? "en" : userLangId;
   }
 
@@ -198,7 +198,7 @@ class HomeScreenController extends GetxController {
     showVersionDialog.value =
         Hive.box("AppPrefs").get("newVersionVisibility") ?? true;
     if (showVersionDialog.isTrue) {
-      newVersionCheck(Get.find<SettingsScreenController>().currentVersion)
+      newVersionCheck(Get.find<SettingsController>().currentVersion)
           .then((value) {
         if (value) {
           showDialog(
@@ -215,7 +215,7 @@ class HomeScreenController extends GetxController {
   }
 
   void whenHomeScreenOnTop() {
-    if (Get.find<SettingsScreenController>().isBottomNavBarEnabled.isTrue) {
+    if (Get.find<SettingsController>().isBottomNavBarEnabled.isTrue) {
       final currentRoute = getCurrentRouteName();
       final isHomeOnTop = currentRoute == '/homeScreen';
       final isResultScreenOnTop = currentRoute == '/searchResultScreen';

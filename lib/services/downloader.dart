@@ -9,12 +9,12 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
 
-import '../ui/screens/Album/album_screen_controller.dart';
-import '../ui/screens/Playlist/playlist_screen_controller.dart';
+import '../presentation/controllers/album/album_controller.dart';
+import '../presentation/controllers/playlist/playlist_controller.dart';
 import '/services/stream_service.dart';
 import '../ui/widgets/snackbar.dart';
 import '/services/permission_service.dart';
-import '../ui/screens/Settings/settings_screen_controller.dart';
+import '../presentation/controllers/settings/settings_controller.dart';
 import '/utils/helper.dart';
 import '/models/media_Item_builder.dart';
 import '../ui/screens/Library/library_controller.dart';
@@ -34,15 +34,15 @@ class Downloader extends GetxService {
   RxList<MediaItem> songQueue = <MediaItem>[].obs;
 
   Future<bool> checkPermissionNDir() async {
-    final settingsScreenController = Get.find<SettingsScreenController>();
+    final SettingsController = Get.find<SettingsController>();
 
-    if (!settingsScreenController.isCurrentPathsupportDownDir &&
+    if (!SettingsController.isCurrentPathsupportDownDir &&
         !await PermissionService.getExtStoragePermission()) {
       return false;
     }
 
     final dirPath =
-        Get.find<SettingsScreenController>().downloadLocationPath.string;
+        Get.find<SettingsController>().downloadLocationPath.string;
     final directory = Directory(dirPath);
     if (!await directory.exists()) {
       await directory.create(recursive: true);
@@ -91,20 +91,19 @@ class Downloader extends GetxService {
           currentPlaylistId.value = playlistId;
           await downloadSongList((playlistQueue[playlistId]!).toList(),
               isPlaylist: true);
-          if (Get.isRegistered<PlaylistScreenController>(
+          if (Get.isRegistered<PlaylistController>(
                   tag: Key(playlistId).hashCode.toString()) &&
               playlistQueue.containsKey(playlistId)) {
-            Get.find<PlaylistScreenController>(
+            Get.find<PlaylistController>(
                     tag: Key(playlistId).hashCode.toString())
                 .isDownloaded
                 .value = true;
-          } 
+          }
           // in case of album
-          else if (Get.isRegistered<AlbumScreenController>(
+          else if (Get.isRegistered<AlbumController>(
                   tag: Key(playlistId).hashCode.toString()) &&
               playlistQueue.containsKey(playlistId)) {
-            Get.find<AlbumScreenController>(
-                    tag: Key(playlistId).hashCode.toString())
+            Get.find<AlbumController>(tag: Key(playlistId).hashCode.toString())
                 .isDownloaded
                 .value = true;
           }
@@ -152,8 +151,8 @@ class Downloader extends GetxService {
   Future<void> writeFileStream(MediaItem song) async {
     Completer<void> complete = Completer();
 
-    final settingsScreenController = Get.find<SettingsScreenController>();
-    final downloadingFormat = settingsScreenController.downloadingFormat.string;
+    final SettingsController = Get.find<SettingsController>();
+    final downloadingFormat = SettingsController.downloadingFormat.string;
 
     final playerResponse = await StreamProvider.fetch(song.id);
     // if (!playerResponse.playable) {
@@ -185,7 +184,7 @@ class Downloader extends GetxService {
         ? playerResponse.highestBitrateOpusAudio!
         : playerResponse.highestBitrateMp4aAudio!;
 
-    final dirPath = settingsScreenController.downloadLocationPath.string;
+    final dirPath = SettingsController.downloadLocationPath.string;
     final actualDownformat =
         requiredAudioStream.audioCodec.name.contains("mp") ? "m4a" : "opus";
     final RegExp invalidChar =
@@ -221,7 +220,7 @@ class Downloader extends GetxService {
         // Save Thumbnail
         try {
           final thumbnailPath =
-              "${settingsScreenController.supportDirPath}/thumbnails/${song.id}.png";
+              "${SettingsController.supportDirPath}/thumbnails/${song.id}.png";
           await _dio.downloadUri(song.artUri!, thumbnailPath);
           // ignore: empty_catches
         } catch (e) {}

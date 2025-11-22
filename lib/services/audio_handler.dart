@@ -20,13 +20,13 @@ import '/services/equalizer.dart';
 import '/services/stream_service.dart';
 import '/models/hm_streaming_data.dart';
 import '/ui/player/player_controller.dart';
-import '../ui/screens/Home/home_screen_controller.dart';
+import '../presentation/controllers/home/home_controller.dart';
 import '/services/background_task.dart';
 import '/services/permission_service.dart';
 import '../utils/helper.dart';
 import '/models/media_Item_builder.dart';
 import '/services/utils.dart';
-import '../ui/screens/Settings/settings_screen_controller.dart';
+import '../presentation/controllers/settings/settings_controller.dart';
 import '../ui/screens/Library/library_controller.dart';
 // ignore: unused_import, implementation_imports, depend_on_referenced_packages
 import "package:media_kit/src/player/platform_player.dart" show MPVLogLevel;
@@ -279,7 +279,7 @@ class MyAudioHandler extends BaseAudioHandler with GetxServiceMixin {
   AudioSource _createAudioSource(MediaItem mediaItem) {
     final url = mediaItem.extras!['url'] as String;
     if (url.contains('/cache') ||
-        (Get.find<SettingsScreenController>().cacheSongs.isTrue &&
+        (Get.find<SettingsController>().cacheSongs.isTrue &&
             url.contains("http"))) {
       printINFO("Playing Using LockCaching");
       isPlayingUsingLockCachingSource = true;
@@ -711,7 +711,7 @@ class MyAudioHandler extends BaseAudioHandler with GetxServiceMixin {
   }
 
   Future<void> saveSessionData() async {
-    if (Get.find<SettingsScreenController>().restorePlaybackSession.isFalse) {
+    if (Get.find<SettingsController>().restorePlaybackSession.isFalse) {
       return;
     }
     final currQueue = queue.value;
@@ -758,9 +758,9 @@ class MyAudioHandler extends BaseAudioHandler with GetxServiceMixin {
   @override
   Future<void> onTaskRemoved() async {
     final stopForegroundService =
-        Get.find<SettingsScreenController>().stopPlyabackOnSwipeAway.value;
+        Get.find<SettingsController>().stopPlyabackOnSwipeAway.value;
     if (stopForegroundService) {
-      await Get.find<HomeScreenController>().cachedHomeScreenData();
+      await Get.find<HomeController>().cachedHomeScreenData();
       await saveSessionData();
       await stop();
     }
@@ -827,7 +827,7 @@ class MyAudioHandler extends BaseAudioHandler with GetxServiceMixin {
           lowQualityAudio: audio);
 
       if (path.contains(
-          "${Get.find<SettingsScreenController>().supportDirPath}/Music")) {
+          "${Get.find<SettingsController>().supportDirPath}/Music")) {
         return streamInfo;
       }
       //check file access and if file exist in storage

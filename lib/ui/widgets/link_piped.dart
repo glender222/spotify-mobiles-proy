@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 
 import '../../utils/helper.dart';
 import '/services/piped_service.dart';
-import '../screens/Settings/settings_screen_controller.dart';
+import '../../presentation/controllers/settings/settings_controller.dart';
 import '../screens/Library/library_controller.dart';
 import 'common_dialog_widget.dart';
 import 'modified_text_field.dart';
@@ -169,7 +169,7 @@ class PipedLinkedController extends GetxController {
         .then((res) {
       if (res.code == 1) {
         printINFO("Login Successfull");
-        Get.find<SettingsScreenController>().isLinkedWithPiped.value = true;
+        Get.find<SettingsController>().isLinkedWithPiped.value = true;
         Navigator.of(Get.context!).pop();
         ScaffoldMessenger.of(Get.context!).showSnackBar(
             snackbar(Get.context!, "linkAlert".tr, size: SanckBarSize.MEDIUM));

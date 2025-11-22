@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:harmonymusic/ui/screens/Home/home_screen_controller.dart';
+import 'package:harmonymusic/presentation/controllers/home/home_controller.dart';
 
 class BottomNavBar extends StatelessWidget {
   const BottomNavBar({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final homeScreenController = Get.find<HomeScreenController>();
+    final HomeController = Get.find<HomeController>();
     return Obx(() => NavigationBar(
-            onDestinationSelected: homeScreenController.onBottonBarTabSelected,
-            selectedIndex: homeScreenController.tabIndex.toInt(),
+            onDestinationSelected: HomeController.onBottonBarTabSelected,
+            selectedIndex: HomeController.tabIndex.toInt(),
             backgroundColor: Theme.of(context).primaryColor,
             indicatorColor: Theme.of(context).colorScheme.secondary,
             labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,

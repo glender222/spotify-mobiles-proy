@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
-import '/ui/screens/Home/home_screen_controller.dart';
-import '/ui/screens/Settings/settings_screen_controller.dart';
+import '/presentation/controllers/home/home_controller.dart';
+import '/presentation/controllers/settings/settings_controller.dart';
 import '../utils/helper.dart';
 import '../ui/navigator.dart';
 import '../ui/player/player.dart';
@@ -24,12 +24,12 @@ class Home extends StatelessWidget {
   Widget build(BuildContext context) {
     printINFO("Home");
     final PlayerController playerController = Get.find<PlayerController>();
-    final settingsScreenController = Get.find<SettingsScreenController>();
-    final homeScreenController = Get.find<HomeScreenController>();
+    final SettingsController = Get.find<SettingsController>();
+    final HomeController = Get.find<HomeController>();
     final size = MediaQuery.of(context).size;
     final isWideScreen = size.width > 800;
     if (!playerController.initFlagForPlayer &&
-        settingsScreenController.isBottomNavBarEnabled.isFalse) {
+        SettingsController.isBottomNavBarEnabled.isFalse) {
       if (isWideScreen) {
         playerController.playerPanelMinHeight.value =
             105 + Get.mediaQuery.padding.bottom;
@@ -48,10 +48,10 @@ class Home extends StatelessWidget {
           if (Get.nestedKey(ScreenNavigationSetup.id)!.currentState!.canPop()) {
             Get.nestedKey(ScreenNavigationSetup.id)!.currentState!.pop();
           } else {
-            if (homeScreenController.tabIndex.value != 0) {
-              settingsScreenController.isBottomNavBarEnabled.isTrue
-                  ? homeScreenController.onBottonBarTabSelected(0)
-                  : homeScreenController.onSideBarTabSelected(0);
+            if (HomeController.tabIndex.value != 0) {
+              SettingsController.isBottomNavBarEnabled.isTrue
+                  ? HomeController.onBottonBarTabSelected(0)
+                  : HomeController.onSideBarTabSelected(0);
             } else if (playerController.buttonState.value ==
                 PlayButtonState.playing) {
               SystemNavigator.pop();
@@ -68,10 +68,10 @@ class Home extends StatelessWidget {
         },
         child: Obx(
           () => Scaffold(
-              bottomNavigationBar: settingsScreenController
+              bottomNavigationBar: SettingsController
                       .isBottomNavBarEnabled.isTrue
                   ? ScrollToHideWidget(
-                      isVisible: homeScreenController.isHomeSreenOnTop.isTrue &&
+                      isVisible: HomeController.isHomeSreenOnTop.isTrue &&
                           playerController.isPanelGTHOpened.isFalse,
                       child: const BottomNavBar())
                   : null,

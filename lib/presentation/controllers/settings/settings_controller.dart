@@ -57,11 +57,11 @@ import '../../../domain/settings/usecases/unlink_piped_usecase.dart';
 import '../../../services/music_service.dart';
 import '../../../utils/helper.dart';
 import '../../../utils/update_check_flag_file.dart';
-import '../../player/player_controller.dart';
-import '../../utils/theme_controller.dart';
-import '../Home/home_screen_controller.dart';
+import '../../../ui/player/player_controller.dart';
+import '../../../ui/utils/theme_controller.dart';
+import '../home/home_controller.dart';
 
-class SettingsScreenController extends GetxController {
+class SettingsController extends GetxController {
   late String _supportDir;
   final cacheSongs = false.obs;
   final themeModetype = ThemeType.dynamic.obs;
@@ -93,53 +93,82 @@ class SettingsScreenController extends GetxController {
   // Use Cases
   final _getAppLanguageUseCase = Get.find<GetAppLanguageUseCase>();
   final _setAppLanguageUseCase = Get.find<SetAppLanguageUseCase>();
-  final _getHomeScreenContentNumberUseCase = Get.find<GetHomeScreenContentNumberUseCase>();
-  final _setHomeScreenContentNumberUseCase = Get.find<SetHomeScreenContentNumberUseCase>();
+  final _getHomeScreenContentNumberUseCase =
+      Get.find<GetHomeScreenContentNumberUseCase>();
+  final _setHomeScreenContentNumberUseCase =
+      Get.find<SetHomeScreenContentNumberUseCase>();
   final _getStreamingQualityUseCase = Get.find<GetStreamingQualityUseCase>();
   final _setStreamingQualityUseCase = Get.find<SetStreamingQualityUseCase>();
   final _getPlayerUiUseCase = Get.find<GetPlayerUiUseCase>();
   final _setPlayerUiUseCase = Get.find<SetPlayerUiUseCase>();
-  final _isBottomNavBarEnabledUseCase = Get.find<IsBottomNavBarEnabledUseCase>();
-  final _setBottomNavBarEnabledUseCase = Get.find<SetBottomNavBarEnabledUseCase>();
-  final _isSlidableActionEnabledUseCase = Get.find<IsSlidableActionEnabledUseCase>();
-  final _setSlidableActionEnabledUseCase = Get.find<SetSlidableActionEnabledUseCase>();
+  final _isBottomNavBarEnabledUseCase =
+      Get.find<IsBottomNavBarEnabledUseCase>();
+  final _setBottomNavBarEnabledUseCase =
+      Get.find<SetBottomNavBarEnabledUseCase>();
+  final _isSlidableActionEnabledUseCase =
+      Get.find<IsSlidableActionEnabledUseCase>();
+  final _setSlidableActionEnabledUseCase =
+      Get.find<SetSlidableActionEnabledUseCase>();
   final _getDownloadingFormatUseCase = Get.find<GetDownloadingFormatUseCase>();
   final _setDownloadingFormatUseCase = Get.find<SetDownloadingFormatUseCase>();
   final _getExportedLocationUseCase = Get.find<GetExportedLocationUseCase>();
   final _setExportedLocationUseCase = Get.find<SetExportedLocationUseCase>();
   final _getDownloadLocationUseCase = Get.find<GetDownloadLocationUseCase>();
   final _setDownloadLocationUseCase = Get.find<SetDownloadLocationUseCase>();
-  final _resetDownloadLocationUseCase = Get.find<ResetDownloadLocationUseCase>();
-  final _isTransitionAnimationDisabledUseCase = Get.find<IsTransitionAnimationDisabledUseCase>();
-  final _setTransitionAnimationDisabledUseCase = Get.find<SetTransitionAnimationDisabledUseCase>();
+  final _resetDownloadLocationUseCase =
+      Get.find<ResetDownloadLocationUseCase>();
+  final _isTransitionAnimationDisabledUseCase =
+      Get.find<IsTransitionAnimationDisabledUseCase>();
+  final _setTransitionAnimationDisabledUseCase =
+      Get.find<SetTransitionAnimationDisabledUseCase>();
   final _clearImagesCacheUseCase = Get.find<ClearImagesCacheUseCase>();
   final _getThemeModeUseCase = Get.find<GetThemeModeUseCase>();
   final _setThemeModeUseCase = Get.find<SetThemeModeUseCase>();
-  final _getDiscoverContentTypeUseCase = Get.find<GetDiscoverContentTypeUseCase>();
-  final _setDiscoverContentTypeUseCase = Get.find<SetDiscoverContentTypeUseCase>();
-  final _isCachingSongsEnabledUseCase = Get.find<IsCachingSongsEnabledUseCase>();
-  final _setCachingSongsEnabledUseCase = Get.find<SetCachingSongsEnabledUseCase>();
+  final _getDiscoverContentTypeUseCase =
+      Get.find<GetDiscoverContentTypeUseCase>();
+  final _setDiscoverContentTypeUseCase =
+      Get.find<SetDiscoverContentTypeUseCase>();
+  final _isCachingSongsEnabledUseCase =
+      Get.find<IsCachingSongsEnabledUseCase>();
+  final _setCachingSongsEnabledUseCase =
+      Get.find<SetCachingSongsEnabledUseCase>();
   final _isSkipSilenceEnabledUseCase = Get.find<IsSkipSilenceEnabledUseCase>();
-  final _setSkipSilenceEnabledUseCase = Get.find<SetSkipSilenceEnabledUseCase>();
-  final _isLoudnessNormalizationEnabledUseCase = Get.find<IsLoudnessNormalizationEnabledUseCase>();
-  final _setLoudnessNormalizationEnabledUseCase = Get.find<SetLoudnessNormalizationEnabledUseCase>();
-  final _shouldRestorePlaybackSessionUseCase = Get.find<ShouldRestorePlaybackSessionUseCase>();
-  final _setRestorePlaybackSessionUseCase = Get.find<SetRestorePlaybackSessionUseCase>();
-  final _isCacheHomeScreenDataEnabledUseCase = Get.find<IsCacheHomeScreenDataEnabledUseCase>();
-  final _setCacheHomeScreenDataEnabledUseCase = Get.find<SetCacheHomeScreenDataEnabledUseCase>();
-  final _isAutoDownloadFavoriteSongEnabledUseCase = Get.find<IsAutoDownloadFavoriteSongEnabledUseCase>();
-  final _setAutoDownloadFavoriteSongEnabledUseCase = Get.find<SetAutoDownloadFavoriteSongEnabledUseCase>();
-  final _isBackgroundPlayEnabledUseCase = Get.find<IsBackgroundPlayEnabledUseCase>();
-  final _setBackgroundPlayEnabledUseCase = Get.find<SetBackgroundPlayEnabledUseCase>();
-  final _isIgnoringBatteryOptimizationsUseCase = Get.find<IsIgnoringBatteryOptimizationsUseCase>();
-  final _enableIgnoringBatteryOptimizationsUseCase = Get.find<EnableIgnoringBatteryOptimizationsUseCase>();
+  final _setSkipSilenceEnabledUseCase =
+      Get.find<SetSkipSilenceEnabledUseCase>();
+  final _isLoudnessNormalizationEnabledUseCase =
+      Get.find<IsLoudnessNormalizationEnabledUseCase>();
+  final _setLoudnessNormalizationEnabledUseCase =
+      Get.find<SetLoudnessNormalizationEnabledUseCase>();
+  final _shouldRestorePlaybackSessionUseCase =
+      Get.find<ShouldRestorePlaybackSessionUseCase>();
+  final _setRestorePlaybackSessionUseCase =
+      Get.find<SetRestorePlaybackSessionUseCase>();
+  final _isCacheHomeScreenDataEnabledUseCase =
+      Get.find<IsCacheHomeScreenDataEnabledUseCase>();
+  final _setCacheHomeScreenDataEnabledUseCase =
+      Get.find<SetCacheHomeScreenDataEnabledUseCase>();
+  final _isAutoDownloadFavoriteSongEnabledUseCase =
+      Get.find<IsAutoDownloadFavoriteSongEnabledUseCase>();
+  final _setAutoDownloadFavoriteSongEnabledUseCase =
+      Get.find<SetAutoDownloadFavoriteSongEnabledUseCase>();
+  final _isBackgroundPlayEnabledUseCase =
+      Get.find<IsBackgroundPlayEnabledUseCase>();
+  final _setBackgroundPlayEnabledUseCase =
+      Get.find<SetBackgroundPlayEnabledUseCase>();
+  final _isIgnoringBatteryOptimizationsUseCase =
+      Get.find<IsIgnoringBatteryOptimizationsUseCase>();
+  final _enableIgnoringBatteryOptimizationsUseCase =
+      Get.find<EnableIgnoringBatteryOptimizationsUseCase>();
   final _shouldAutoOpenPlayerUseCase = Get.find<ShouldAutoOpenPlayerUseCase>();
   final _setAutoOpenPlayerUseCase = Get.find<SetAutoOpenPlayerUseCase>();
   final _isPipedLinkedUseCase = Get.find<IsPipedLinkedUseCase>();
   final _unlinkPipedUseCase = Get.find<UnlinkPipedUseCase>();
-  final _resetAppSettingsToDefaultUseCase = Get.find<ResetAppSettingsToDefaultUseCase>();
-  final _shouldStopPlaybackOnSwipeAwayUseCase = Get.find<ShouldStopPlaybackOnSwipeAwayUseCase>();
-  final _setStopPlaybackOnSwipeAwayUseCase = Get.find<SetStopPlaybackOnSwipeAwayUseCase>();
+  final _resetAppSettingsToDefaultUseCase =
+      Get.find<ResetAppSettingsToDefaultUseCase>();
+  final _shouldStopPlaybackOnSwipeAwayUseCase =
+      Get.find<ShouldStopPlaybackOnSwipeAwayUseCase>();
+  final _setStopPlaybackOnSwipeAwayUseCase =
+      Get.find<SetStopPlaybackOnSwipeAwayUseCase>();
 
   @override
   void onInit() {
@@ -153,7 +182,7 @@ class SettingsScreenController extends GetxController {
   get isCurrentPathsupportDownDir =>
       "$_supportDir/Music" == downloadLocationPath.toString();
   String get supportDirPath => _supportDir;
-  
+
   Future<String> get dbDir async {
     if (GetPlatform.isAndroid || GetPlatform.isIOS) {
       return (await getApplicationDocumentsDirectory()).path;
@@ -161,7 +190,7 @@ class SettingsScreenController extends GetxController {
       return (await getApplicationSupportDirectory()).path;
     }
   }
-  
+
   Future<void> closeAllDatabases() async {
     await Hive.close();
   }
@@ -192,8 +221,7 @@ class SettingsScreenController extends GetxController {
     loudnessNormalizationEnabled.value =
         _isLoudnessNormalizationEnabledUseCase();
     autoOpenPlayer.value = _shouldAutoOpenPlayerUseCase();
-    restorePlaybackSession.value =
-        _shouldRestorePlaybackSessionUseCase();
+    restorePlaybackSession.value = _shouldRestorePlaybackSessionUseCase();
     cacheHomeScreenData.value = _isCacheHomeScreenDataEnabledUseCase();
     streamingQuality.value = _getStreamingQualityUseCase();
     playerUi.value = _getPlayerUiUseCase();
@@ -204,8 +232,7 @@ class SettingsScreenController extends GetxController {
     discoverContentType.value = _getDiscoverContentTypeUseCase();
     slidableActionEnabled.value = _isSlidableActionEnabledUseCase();
     isLinkedWithPiped.value = await _isPipedLinkedUseCase();
-    stopPlyabackOnSwipeAway.value =
-        _shouldStopPlaybackOnSwipeAwayUseCase();
+    stopPlyabackOnSwipeAway.value = _shouldStopPlaybackOnSwipeAwayUseCase();
     isIgnoringBatteryOptimizations.value =
         await _isIgnoringBatteryOptimizationsUseCase();
     autoDownloadFavoriteSongEnabled.value =
@@ -215,7 +242,7 @@ class SettingsScreenController extends GetxController {
   void setAppLanguage(String? val) {
     Get.updateLocale(Locale(val!));
     Get.find<MusicServices>().hlCode = val;
-    Get.find<HomeScreenController>().loadContentFromNetwork(silent: true);
+    Get.find<HomeController>().loadContentFromNetwork(silent: true);
     currentAppLanguageCode.value = val;
     _setAppLanguageUseCase(val);
   }
@@ -240,7 +267,7 @@ class SettingsScreenController extends GetxController {
   }
 
   void enableBottomNavBar(bool val) {
-    final homeScrCon = Get.find<HomeScreenController>();
+    final homeScrCon = Get.find<HomeController>();
     final playerCon = Get.find<PlayerController>();
     if (val) {
       homeScrCon.onSideBarTabSelected(3);
@@ -302,7 +329,7 @@ class SettingsScreenController extends GetxController {
   void onContentChange(dynamic value) {
     _setDiscoverContentTypeUseCase(value);
     discoverContentType.value = value;
-    Get.find<HomeScreenController>().changeDiscoverContent(value);
+    Get.find<HomeController>().changeDiscoverContent(value);
   }
 
   void toggleCachingSongsValue(bool value) {

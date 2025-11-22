@@ -8,7 +8,7 @@ import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:terminate_restart/terminate_restart.dart';
 
-import '/ui/screens/Settings/settings_screen_controller.dart';
+import '/presentation/controllers/settings/settings_controller.dart';
 import '/utils/helper.dart';
 import '../../services/permission_service.dart';
 import 'common_dialog_widget.dart';
@@ -155,11 +155,11 @@ class RestoreDialogController extends GetxController {
     processingFiles.value = true;
     await Future.delayed(const Duration(seconds: 4));
     final restoreFilePath = pickedFile.toString();
-    final supportDirPath = Get.find<SettingsScreenController>().supportDirPath;
-    final dbDirPath = await Get.find<SettingsScreenController>().dbDir; // error aqui
+    final supportDirPath = Get.find<SettingsController>().supportDirPath;
+    final dbDirPath = await Get.find<SettingsController>().dbDir; // error aqui
     final Directory dbDir = Directory(dbDirPath);
     printInfo(info: dbDir.path);
-    await Get.find<SettingsScreenController>().closeAllDatabases(); // no definido el metodo
+    await Get.find<SettingsController>().closeAllDatabases(); // no definido el metodo
 
     //delele all the files with extension .hive
     for (final file in dbDir.listSync()) {

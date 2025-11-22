@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:harmonymusic/ui/screens/Home/home_screen_controller.dart';
+import 'package:harmonymusic/presentation/controllers/home/home_controller.dart';
 import 'package:sidebar_with_animation/animated_side_bar.dart';
 
 class SideNavBar extends StatelessWidget {
@@ -10,7 +10,7 @@ class SideNavBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final isMobileOrTabScreen = size.width < 480;
-    final homeScreenController = Get.find<HomeScreenController>();
+    final HomeController = Get.find<HomeController>();
     return Align(
       alignment: Alignment.topCenter,
       child: isMobileOrTabScreen
@@ -21,9 +21,9 @@ class SideNavBar extends StatelessWidget {
                   () => NavigationRail(
                     useIndicator: !isMobileOrTabScreen,
                     selectedIndex:
-                        homeScreenController.tabIndex.value, //_selectedIndex,
+                        HomeController.tabIndex.value, //_selectedIndex,
                     onDestinationSelected:
-                        homeScreenController.onSideBarTabSelected,
+                        HomeController.onSideBarTabSelected,
                     minWidth: 60,
                     leading: SizedBox(height: size.height < 750 ? 30 : 60),
                     minExtendedWidth: 250,
@@ -57,7 +57,7 @@ class SideNavBar extends StatelessWidget {
           : Padding(
               padding: const EdgeInsets.only(bottom: 100.0),
               child: SideBarAnimated(
-                onTap: homeScreenController.onSideBarTabSelected,
+                onTap: HomeController.onSideBarTabSelected,
                 sideBarColor: Theme.of(context).primaryColor.withAlpha(250),
                 animatedContainerColor: Theme.of(context).colorScheme.secondary,
                 hoverColor:

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '/ui/screens/Artists/artist_screen_v2.dart';
-import '/ui/screens/Settings/settings_screen_controller.dart';
+import '/presentation/controllers/settings/settings_controller.dart';
 import '../../widgets/animated_screen_transition.dart';
 import '../../widgets/loader.dart';
 import '../../widgets/separate_tab_item_widget.dart';
@@ -11,7 +11,7 @@ import '/ui/widgets/image_widget.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../navigator.dart';
 import '../../widgets/snackbar.dart';
-import 'artist_screen_controller.dart';
+import '../../../presentation/controllers/artist/artist_controller.dart';
 
 class ArtistScreen extends StatelessWidget {
   const ArtistScreen({super.key});
@@ -20,10 +20,9 @@ class ArtistScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final playerController = Get.find<PlayerController>();
     final tag = key.hashCode.toString();
-    final ArtistScreenController artistScreenController =
-        Get.isRegistered<ArtistScreenController>(tag: tag)
-            ? Get.find<ArtistScreenController>(tag: tag)
-            : Get.put(ArtistScreenController(), tag: tag);
+    // Controller is created by ArtistBinding
+    final ArtistController artistController =
+        Get.find<ArtistController>(tag: tag);
     return Scaffold(
       floatingActionButton: Obx(
         () => Padding(
@@ -39,7 +38,7 @@ class ArtistScreen extends StatelessWidget {
                       borderRadius: BorderRadius.all(Radius.circular(14))),
                   elevation: 0,
                   onPressed: () async {
-                    final radioId = artistScreenController.artist_.radioId;
+                    final radioId = artistController.artist_.radioId;
                     if (radioId == null) {
                       ScaffoldMessenger.of(context).showSnackBar(snackbar(
                           context, "radioNotAvailable".tr,
@@ -47,7 +46,7 @@ class ArtistScreen extends StatelessWidget {
                       return;
                     }
                     playerController.startRadio(null,
-                        playlistid: artistScreenController.artist_.radioId);
+                        playlistid: artistController.artist_.radioId);
                   },
                   child: const Icon(Icons.sensors)),
             ),
@@ -55,9 +54,8 @@ class ArtistScreen extends StatelessWidget {
         ),
       ),
       body: GetPlatform.isDesktop ||
-              Get.find<SettingsScreenController>().isBottomNavBarEnabled.value
-          ? ArtistScreenBN(
-              artistScreenController: artistScreenController, tag: tag)
+              Get.find<SettingsController>().isBottomNavBarEnabled.value
+          ? ArtistScreenBN(artistController: artistController, tag: tag)
           : Row(
               children: [
                 Align(
@@ -68,7 +66,7 @@ class ArtistScreen extends StatelessWidget {
                       child: Obx(
                         () => NavigationRail(
                           onDestinationSelected:
-                              artistScreenController.onDestinationSelected,
+                              artistController.onDestinationSelected,
                           minWidth: 60,
                           destinations: [
                             "about".tr,
@@ -102,8 +100,8 @@ class ArtistScreen extends StatelessWidget {
                             ],
                           ),
                           labelType: NavigationRailLabelType.all,
-                          selectedIndex: artistScreenController
-                              .navigationRailCurrentIndex.value,
+                          selectedIndex:
+                              artistController.navigationRailCurrentIndex.value,
                         ),
                       ),
                     ),
@@ -112,13 +110,13 @@ class ArtistScreen extends StatelessWidget {
                 Expanded(
                   child: Obx(
                     () => AnimatedScreenTransition(
-                      enabled: Get.find<SettingsScreenController>()
+                      enabled: Get.find<SettingsController>()
                           .isTransitionAnimationDisabled
                           .isFalse,
-                      resverse: artistScreenController.isTabTransitionReversed,
+                      resverse: artistController.isTabTransitionReversed,
                       child: Center(
-                        key: ValueKey<int>(artistScreenController
-                            .navigationRailCurrentIndex.value),
+                        key: ValueKey<int>(
+                            artistController.navigationRailCurrentIndex.value),
                         child: Body(tag: tag),
                       ),
                     ),
@@ -147,26 +145,26 @@ class Body extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ArtistScreenController artistScreenController =
-        Get.find<ArtistScreenController>(tag: tag);
+    final ArtistController artistController =
+        Get.find<ArtistController>(tag: tag);
 
-    final tabIndex = artistScreenController.navigationRailCurrentIndex.value;
+    final tabIndex = artistController.navigationRailCurrentIndex.value;
 
     if (tabIndex == 0) {
-      return Obx(() => artistScreenController.isArtistContentFetced.isTrue
+      return Obx(() => artistController.isArtistContentFetched.isTrue
           ? AboutArtist(
-              artistScreenController: artistScreenController,
+              artistController: artistController,
             )
           : const Center(
               child: LoadingIndicator(),
             ));
     } else {
-      final separatedContent = artistScreenController.sepataredContent;
+      final separatedContent = artistController.separatedContent;
       final currentTabName =
           ["About", "Songs", "Videos", "Albums", "Singles"][tabIndex];
       return Obx(() {
-        if (artistScreenController.isSeparatedArtistContentFetced.isFalse &&
-            artistScreenController.navigationRailCurrentIndex.value != 0) {
+        if (artistController.isSeparatedArtistContentFetched.isFalse &&
+            artistController.navigationRailCurrentIndex.value != 0) {
           return const Center(child: LoadingIndicator());
         }
         return SeparateTabItemWidget(
@@ -178,13 +176,13 @@ class Body extends StatelessWidget {
           title: currentTabName,
           topPadding: context.isLandscape ? 50.0 : 80.0,
           scrollController: currentTabName == "Songs"
-              ? artistScreenController.songScrollController
+              ? artistController.songScrollController
               : currentTabName == "Videos"
-                  ? artistScreenController.videoScrollController
+                  ? artistController.videoScrollController
                   : currentTabName == "Albums"
-                      ? artistScreenController.albumScrollController
+                      ? artistController.albumScrollController
                       : currentTabName == "Singles"
-                          ? artistScreenController.singlesScrollController
+                          ? artistController.singlesScrollController
                           : null,
         );
       });
@@ -195,21 +193,21 @@ class Body extends StatelessWidget {
 class AboutArtist extends StatelessWidget {
   const AboutArtist(
       {super.key,
-      required this.artistScreenController,
+      required this.artistController,
       this.padding = const EdgeInsets.only(bottom: 90, top: 70)});
   final EdgeInsetsGeometry padding;
-  final ArtistScreenController artistScreenController;
+  final ArtistController artistController;
 
   @override
   Widget build(BuildContext context) {
-    final artistData = artistScreenController.artistData;
+    final artistData = artistController.artistData;
     return Align(
       alignment: Alignment.topCenter,
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: SingleChildScrollView(
           padding: padding,
-          child: artistScreenController.isArtistContentFetced.value
+          child: artistController.isArtistContentFetched.value
               ? Column(
                   children: [
                     SizedBox(
@@ -220,7 +218,7 @@ class AboutArtist extends StatelessWidget {
                           Center(
                             child: ImageWidget(
                               size: 200,
-                              artist: artistScreenController.artist_,
+                              artist: artistController.artist_,
                             ),
                           ),
                           Align(
@@ -229,9 +227,9 @@ class AboutArtist extends StatelessWidget {
                               children: [
                                 InkWell(
                                     onTap: () {
-                                      final bool add = artistScreenController
+                                      final bool add = artistController
                                           .isAddedToLibrary.isFalse;
-                                      artistScreenController
+                                      artistController
                                           .addNremoveFromLibrary(add: add)
                                           .then((value) {
                                         if (context.mounted) {
@@ -250,10 +248,10 @@ class AboutArtist extends StatelessWidget {
                                       });
                                     },
                                     child: Obx(
-                                      () => artistScreenController
-                                              .isArtistContentFetced.isFalse
+                                      () => artistController
+                                              .isArtistContentFetched.isFalse
                                           ? const SizedBox.shrink()
-                                          : Icon(artistScreenController
+                                          : Icon(artistController
                                                   .isAddedToLibrary.isFalse
                                               ? Icons.bookmark_add
                                               : Icons.bookmark_added),
@@ -265,7 +263,7 @@ class AboutArtist extends StatelessWidget {
                                     ),
                                     splashRadius: 18,
                                     onPressed: () => Share.share(
-                                        "https://music.youtube.com/channel/${artistScreenController.artist_.browseId}")),
+                                        "https://music.youtube.com/channel/${artistController.artist_.browseId}")),
                               ],
                             ),
                           )
@@ -275,7 +273,7 @@ class AboutArtist extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.only(top: 10, bottom: 10),
                       child: Text(
-                        artistScreenController.artist_.name,
+                        artistController.artist_.name,
                         style: Theme.of(context).textTheme.titleLarge,
                       ),
                     ),

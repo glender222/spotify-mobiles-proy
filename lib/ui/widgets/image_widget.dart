@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shimmer/shimmer.dart';
 
-import '../screens/Settings/settings_screen_controller.dart';
+import '../../presentation/controllers/settings/settings_controller.dart';
 import '/models/artist.dart';
 import '../../models/album.dart';
 import '../../models/playlist.dart';
@@ -64,7 +64,7 @@ class ImageWidget extends StatelessWidget {
       child: offlineAvailable
           ? Image.file(
               File(
-                  "${Get.find<SettingsScreenController>().supportDirPath}/thumbnails/${song!.id}.png"),
+                  "${Get.find<SettingsController>().supportDirPath}/thumbnails/${song!.id}.png"),
               height: size,
               width: size,
               fit: BoxFit.cover,

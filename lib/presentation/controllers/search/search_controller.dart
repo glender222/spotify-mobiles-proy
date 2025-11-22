@@ -5,7 +5,7 @@ import 'package:hive/hive.dart';
 import '/utils/app_link_controller.dart' show ProcessLink;
 import '../../../domain/search/usecases/get_search_suggestions_usecase.dart';
 
-class SearchScreenController extends GetxController with ProcessLink {
+class SearchController extends GetxController with ProcessLink {
   final textInputController = TextEditingController();
   final _getSearchSuggestionsUseCase = Get.find<GetSearchSuggestionsUseCase>();
   final suggestionList = [].obs;
@@ -24,8 +24,8 @@ class SearchScreenController extends GetxController with ProcessLink {
   }
 
   _init() async {
-    if(GetPlatform.isDesktop){
-      focusNode.addListener((){
+    if (GetPlatform.isDesktop) {
+      focusNode.addListener(() {
         isSearchBarInFocus.value = focusNode.hasFocus;
       });
     }
@@ -34,8 +34,8 @@ class SearchScreenController extends GetxController with ProcessLink {
   }
 
   Future<void> onChanged(String text) async {
-    if(text.contains("https://")){
-      urlPasted.value = true; 
+    if (text.contains("https://")) {
+      urlPasted.value = true;
       return;
     }
     urlPasted.value = false;

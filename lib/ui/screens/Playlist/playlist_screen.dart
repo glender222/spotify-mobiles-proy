@@ -19,7 +19,7 @@ import '../../widgets/song_list_tile.dart';
 import '../../widgets/songinfo_bottom_sheet.dart';
 import '../../widgets/sort_widget.dart';
 import '../Library/library_controller.dart';
-import 'playlist_screen_controller.dart';
+import '../../../presentation/controllers/playlist/playlist_controller.dart';
 
 class PlaylistScreen extends StatelessWidget {
   const PlaylistScreen({super.key});
@@ -28,9 +28,9 @@ class PlaylistScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final tag = key.hashCode.toString();
     final playlistController =
-        (Get.isRegistered<PlaylistScreenController>(tag: tag))
-            ? Get.find<PlaylistScreenController>(tag: tag)
-            : Get.put(PlaylistScreenController(), tag: tag);
+        (Get.isRegistered<PlaylistController>(tag: tag))
+            ? Get.find<PlaylistController>(tag: tag)
+            : Get.put(PlaylistController(), tag: tag);
     final size = MediaQuery.of(context).size;
     final playerController = Get.find<PlayerController>();
     final landscape = size.width > size.height;

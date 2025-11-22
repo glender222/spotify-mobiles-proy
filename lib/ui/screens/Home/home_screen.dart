@@ -8,7 +8,7 @@ import '../Library/library_combined.dart';
 import '../../widgets/side_nav_bar.dart';
 import '../Library/library.dart';
 import '../Search/search_screen.dart';
-import '../Settings/settings_screen_controller.dart';
+import '../../../presentation/controllers/settings/settings_controller.dart';
 import '/ui/player/player_controller.dart';
 import '/models/playlist.dart';
 import '/models/quick_picks.dart';
@@ -17,7 +17,7 @@ import '../../navigator.dart';
 import '../../widgets/content_list_widget.dart';
 import '../../widgets/quickpickswidget.dart';
 import '../../widgets/shimmer_widgets/home_shimmer.dart';
-import 'home_screen_controller.dart';
+import '../../../presentation/controllers/home/home_controller.dart';
 import '../Settings/settings_screen.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -25,17 +25,17 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final PlayerController playerController = Get.find<PlayerController>();
-    final HomeScreenController homeScreenController =
-        Get.find<HomeScreenController>();
-    final SettingsScreenController settingsScreenController =
-        Get.find<SettingsScreenController>();
+    final HomeController HomeController =
+        Get.find<HomeController>();
+    final SettingsController SettingsController =
+        Get.find<SettingsController>();
 
     return Scaffold(
         floatingActionButton: Obx(
-          () => ((homeScreenController.tabIndex.value == 0 &&
+          () => ((HomeController.tabIndex.value == 0 &&
                           !GetPlatform.isDesktop) ||
-                      homeScreenController.tabIndex.value == 2) &&
-                  settingsScreenController.isBottomNavBarEnabled.isFalse
+                      HomeController.tabIndex.value == 2) &&
+                  SettingsController.isBottomNavBarEnabled.isFalse
               ? Obx(
                   () => Padding(
                     padding: EdgeInsets.only(
@@ -55,7 +55,7 @@ class HomeScreen extends StatelessWidget {
                                     BorderRadius.all(Radius.circular(14))),
                             elevation: 0,
                             onPressed: () async {
-                              if (homeScreenController.tabIndex.value == 2) {
+                              if (HomeController.tabIndex.value == 2) {
                                 showDialog(
                                     context: context,
                                     builder: (context) =>
@@ -67,7 +67,7 @@ class HomeScreen extends StatelessWidget {
                               // file:///data/user/0/com.example.harmonymusic/cache/libCachedImageData/
                               //file:///data/user/0/com.example.harmonymusic/cache/just_audio_cache/
                             },
-                            child: Icon(homeScreenController.tabIndex.value == 2
+                            child: Icon(HomeController.tabIndex.value == 2
                                 ? Icons.add
                                 : Icons.search)),
                       ),
@@ -80,7 +80,7 @@ class HomeScreen extends StatelessWidget {
           () => Row(
             children: <Widget>[
               // create a navigation rail
-              settingsScreenController.isBottomNavBarEnabled.isFalse
+              SettingsController.isBottomNavBarEnabled.isFalse
                   ? const SideNavBar()
                   : const SizedBox(
                       width: 0,
@@ -88,13 +88,13 @@ class HomeScreen extends StatelessWidget {
               //const VerticalDivider(thickness: 1, width: 2),
               Expanded(
                 child: Obx(() => AnimatedScreenTransition(
-                    enabled: settingsScreenController
+                    enabled: SettingsController
                         .isTransitionAnimationDisabled.isFalse,
-                    resverse: homeScreenController.reverseAnimationtransiton,
+                    resverse: HomeController.reverseAnimationtransiton,
                     horizontalTransition:
-                        settingsScreenController.isBottomNavBarEnabled.isTrue,
+                        SettingsController.isBottomNavBarEnabled.isTrue,
                     child: Center(
-                      key: ValueKey<int>(homeScreenController.tabIndex.value),
+                      key: ValueKey<int>(HomeController.tabIndex.value),
                       child: const Body(),
                     ))),
               ),
@@ -111,8 +111,8 @@ class Body extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final homeScreenController = Get.find<HomeScreenController>();
-    final settingsScreenController = Get.find<SettingsScreenController>();
+    final HomeController = Get.find<HomeController>();
+    final SettingsController = Get.find<SettingsController>();
     final size = MediaQuery.of(context).size;
     final topPadding = GetPlatform.isDesktop
         ? 85.0
@@ -122,8 +122,8 @@ class Body extends StatelessWidget {
                 ? 80.0
                 : 85.0;
     final leftPadding =
-        settingsScreenController.isBottomNavBarEnabled.isTrue ? 20.0 : 5.0;
-    if (homeScreenController.tabIndex.value == 0) {
+        SettingsController.isBottomNavBarEnabled.isTrue ? 20.0 : 5.0;
+    if (HomeController.tabIndex.value == 0) {
       return Padding(
         padding: EdgeInsets.only(left: leftPadding),
         child: Stack(
@@ -139,7 +139,7 @@ class Body extends StatelessWidget {
                 }
               },
               child: Obx(
-                () => homeScreenController.networkError.isTrue
+                () => HomeController.networkError.isTrue
                     ? SizedBox(
                         height: MediaQuery.of(context).size.height - 180,
                         child: Column(
@@ -177,7 +177,7 @@ class Body extends StatelessWidget {
                                                 BorderRadius.circular(10)),
                                         child: InkWell(
                                           onTap: () {
-                                            homeScreenController
+                                            HomeController
                                                 .loadContentFromNetwork();
                                           },
                                           child: Text(
@@ -195,7 +195,7 @@ class Body extends StatelessWidget {
                         ),
                       )
                     : Obx(() {
-                        if (!homeScreenController.isContentFetched.value) {
+                        if (!HomeController.isContentFetched.value) {
                           return const HomeShimmer();
                         }
                         return ListView(
@@ -203,11 +203,11 @@ class Body extends StatelessWidget {
                               EdgeInsets.only(bottom: 200, top: topPadding),
                           children: [
                             Obx(() {
-                              if (homeScreenController
+                              if (HomeController
                                   .recentlyPlayed.isNotEmpty) {
                                 return QuickPicksWidget(
                                   content: QuickPicks(
-                                    homeScreenController.recentlyPlayed,
+                                    HomeController.recentlyPlayed,
                                     title: "Escuchado Recientemente",
                                   ),
                                 );
@@ -215,12 +215,12 @@ class Body extends StatelessWidget {
                               return const SizedBox.shrink();
                             }),
                             Obx(() {
-                              if (homeScreenController
+                              if (HomeController
                                   .recentPlaylists.isNotEmpty) {
                                 return ContentListWidget(
                                   content: PlaylistContent(
                                     playlistList:
-                                        homeScreenController.recentPlaylists,
+                                        HomeController.recentPlaylists,
                                     title: "Tus Playlists Recientes",
                                   ),
                                 );
@@ -228,11 +228,11 @@ class Body extends StatelessWidget {
                               return const SizedBox.shrink();
                             }),
                             Obx(() {
-                              if (homeScreenController
+                              if (HomeController
                                   .recommendations.isNotEmpty) {
                                 return QuickPicksWidget(
                                   content: QuickPicks(
-                                    homeScreenController.recommendations,
+                                    HomeController.recommendations,
                                     title: "Recomendaciones",
                                   ),
                                 );
@@ -240,17 +240,17 @@ class Body extends StatelessWidget {
                               return const SizedBox.shrink();
                             }),
                             Obx(() {
-                              if (homeScreenController
+                              if (HomeController
                                   .quickPicks.value.songList.isNotEmpty) {
                                 return QuickPicksWidget(
-                                  content: homeScreenController.quickPicks.value,
+                                  content: HomeController.quickPicks.value,
                                 );
                               }
                               return const SizedBox.shrink();
                             }),
                             Obx(() {
                               return Column(
-                                children: homeScreenController.middleContent
+                                children: HomeController.middleContent
                                     .map((content) => ContentListWidget(
                                           content: content,
                                         ))
@@ -259,7 +259,7 @@ class Body extends StatelessWidget {
                             }),
                             Obx(() {
                               return Column(
-                                children: homeScreenController.fixedContent
+                                children: HomeController.fixedContent
                                     .map((content) => ContentListWidget(
                                           content: content,
                                         ))
@@ -288,25 +288,25 @@ class Body extends StatelessWidget {
           ],
         ),
       );
-    } else if (homeScreenController.tabIndex.value == 1) {
-      return settingsScreenController.isBottomNavBarEnabled.isTrue
+    } else if (HomeController.tabIndex.value == 1) {
+      return SettingsController.isBottomNavBarEnabled.isTrue
           ? const SearchScreen()
           : const SongsLibraryWidget();
-    } else if (homeScreenController.tabIndex.value == 2) {
-      return settingsScreenController.isBottomNavBarEnabled.isTrue
+    } else if (HomeController.tabIndex.value == 2) {
+      return SettingsController.isBottomNavBarEnabled.isTrue
           ? const CombinedLibrary()
           : const PlaylistNAlbumLibraryWidget(isAlbumContent: false);
-    } else if (homeScreenController.tabIndex.value == 3) {
-      return settingsScreenController.isBottomNavBarEnabled.isTrue
+    } else if (HomeController.tabIndex.value == 3) {
+      return SettingsController.isBottomNavBarEnabled.isTrue
           ? const SettingsScreen(isBottomNavActive: true)
           : const PlaylistNAlbumLibraryWidget();
-    } else if (homeScreenController.tabIndex.value == 4) {
+    } else if (HomeController.tabIndex.value == 4) {
       return const LibraryArtistWidget();
-    } else if (homeScreenController.tabIndex.value == 5) {
+    } else if (HomeController.tabIndex.value == 5) {
       return const SettingsScreen();
     } else {
       return Center(
-        child: Text("${homeScreenController.tabIndex.value}"),
+        child: Text("${HomeController.tabIndex.value}"),
       );
     }
   }

@@ -1,7 +1,7 @@
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:harmonymusic/ui/screens/Settings/settings_screen_controller.dart';
+import 'package:harmonymusic/presentation/controllers/settings/settings_controller.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:widget_marquee/widget_marquee.dart';
 
@@ -23,7 +23,7 @@ class MiniPlayer extends StatelessWidget {
     final playerController = Get.find<PlayerController>();
     final size = MediaQuery.of(context).size;
     final isWideScreen = size.width > 800;
-    final bottomNavEnabled = Get.find<SettingsScreenController>().isBottomNavBarEnabled.isTrue;
+    final bottomNavEnabled = Get.find<SettingsController>().isBottomNavBarEnabled.isTrue;
     return Obx(() {
       return Visibility(
         visible: playerController.isPlayerpanelTopVisible.value,

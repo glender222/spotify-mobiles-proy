@@ -16,7 +16,7 @@ import '/services/music_service.dart';
 import '/ui/player/player_controller.dart';
 import '/ui/utils/theme_controller.dart';
 import 'components/custom_expansion_tile.dart';
-import 'settings_screen_controller.dart';
+import '../../../presentation/controllers/settings/settings_controller.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key, this.isBottomNavActive = false});
@@ -24,7 +24,7 @@ class SettingsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final settingsController = Get.find<SettingsScreenController>();
+    final settingsController = Get.find<SettingsController>();
     final topPadding = context.isLandscape ? 50.0 : 90.0;
     final isDesktop = GetPlatform.isDesktop;
     return Padding(
@@ -705,7 +705,7 @@ class ThemeSelectorDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final settingsController = Get.find<SettingsScreenController>();
+    final settingsController = Get.find<SettingsController>();
     return CommonDialog(
       child: Container(
         height: 300,
@@ -759,7 +759,7 @@ class DiscoverContentSelectorDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final settingsController = Get.find<SettingsScreenController>();
+    final settingsController = Get.find<SettingsController>();
     return CommonDialog(
       child: Container(
         height: 300,
@@ -819,7 +819,7 @@ class DiscoverContentSelectorDialog extends StatelessWidget {
 
 Widget radioWidget(
     {required String label,
-    required SettingsScreenController controller,
+    required SettingsController controller,
     required value}) {
   return Obx(() => ListTile(
         visualDensity: const VisualDensity(vertical: -4),

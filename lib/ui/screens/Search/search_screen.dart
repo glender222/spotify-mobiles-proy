@@ -2,25 +2,25 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import 'components/search_item.dart';
-import '/ui/screens/Settings/settings_screen_controller.dart';
+import '/presentation/controllers/settings/settings_controller.dart';
 import '../../widgets/modified_text_field.dart';
 import '/ui/navigator.dart';
-import 'search_screen_controller.dart';
+import '../../../presentation/controllers/search/search_controller.dart';
 
 class SearchScreen extends StatelessWidget {
   const SearchScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final searchScreenController = Get.put(SearchScreenController());
-    final settingsScreenController = Get.find<SettingsScreenController>();
+    final SearchController = Get.put(SearchController());
+    final SettingsController = Get.find<SettingsController>();
     final topPadding = context.isLandscape ? 50.0 : 80.0;
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: Obx(
         () => Row(
           children: [
-            settingsScreenController.isBottomNavBarEnabled.isFalse
+            SettingsController.isBottomNavBarEnabled.isFalse
                 ? Container(
                     width: 60,
                     color:
@@ -67,20 +67,20 @@ class SearchScreen extends StatelessWidget {
                     ),
                     ModifiedTextField(
                       textCapitalization: TextCapitalization.sentences,
-                      controller: searchScreenController.textInputController,
+                      controller: SearchController.textInputController,
                       textInputAction: TextInputAction.search,
-                      onChanged: searchScreenController.onChanged,
+                      onChanged: SearchController.onChanged,
                       onSubmitted: (val) {
                         if (val.contains("https://")) {
-                          searchScreenController.filterLinks(Uri.parse(val));
-                          searchScreenController.reset();
+                          SearchController.filterLinks(Uri.parse(val));
+                          SearchController.reset();
                           return;
                         }
                         Get.toNamed(ScreenNavigationSetup.searchResultScreen,
                             id: ScreenNavigationSetup.id, arguments: val);
-                        searchScreenController.addToHistryQueryList(val);
+                        SearchController.addToHistryQueryList(val);
                       },
-                      autofocus: settingsScreenController
+                      autofocus: SettingsController
                           .isBottomNavBarEnabled.isFalse,
                       cursorColor: Theme.of(context).textTheme.bodySmall!.color,
                       decoration: InputDecoration(
@@ -88,7 +88,7 @@ class SearchScreen extends StatelessWidget {
                           focusColor: Colors.white,
                           hintText: "searchDes".tr,
                           suffix: IconButton(
-                            onPressed: searchScreenController.reset,
+                            onPressed: SearchController.reset,
                             icon: const Icon(Icons.close),
                             splashRadius: 16,
                             iconSize: 19,
@@ -96,25 +96,25 @@ class SearchScreen extends StatelessWidget {
                     ),
                     Expanded(
                       child: Obx(() {
-                        final isEmpty = searchScreenController
+                        final isEmpty = SearchController
                                 .suggestionList.isEmpty ||
-                            searchScreenController.textInputController.text ==
+                            SearchController.textInputController.text ==
                                 "";
                         final list = isEmpty
-                            ? searchScreenController.historyQuerylist.toList()
-                            : searchScreenController.suggestionList.toList();
+                            ? SearchController.historyQuerylist.toList()
+                            : SearchController.suggestionList.toList();
                         return ListView(
                             padding: const EdgeInsets.only(top: 5, bottom: 400),
                             physics: const BouncingScrollPhysics(
                                 parent: AlwaysScrollableScrollPhysics()),
-                            children: searchScreenController.urlPasted.isTrue
+                            children: SearchController.urlPasted.isTrue
                                 ? [
                                     InkWell(
                                       onTap: () {
-                                        searchScreenController.filterLinks(
-                                            Uri.parse(searchScreenController
+                                        SearchController.filterLinks(
+                                            Uri.parse(SearchController
                                                 .textInputController.text));
-                                        searchScreenController.reset();
+                                        SearchController.reset();
                                       },
                                       child: Padding(
                                         padding: const EdgeInsets.symmetric(

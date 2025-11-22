@@ -11,7 +11,7 @@ import 'dart:convert';
 import '../../../utils/house_keeping.dart';
 import '../../widgets/add_to_playlist.dart';
 import '/ui/widgets/sort_widget.dart';
-import '../Settings/settings_screen_controller.dart';
+import '../../../presentation/controllers/settings/settings_controller.dart';
 import '/services/piped_service.dart';
 import '../../../utils/helper.dart';
 import '/models/album.dart';
@@ -121,7 +121,7 @@ class LibrarySongsController extends GetxController {
     }
 
     final thumbFile = File(
-        "${Get.find<SettingsScreenController>().supportDirPath}/thumbnails/${item.id}.png");
+        "${Get.find<SettingsController>().supportDirPath}/thumbnails/${item.id}.png");
     if (await thumbFile.exists()) {
       await thumbFile.delete();
     }

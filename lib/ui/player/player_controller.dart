@@ -9,14 +9,14 @@ import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import '../../domain/download/usecases/download_song_usecase.dart';
 import '../../models/playling_from.dart';
 import '../../services/activity_service.dart';
-import '../screens/Playlist/playlist_screen_controller.dart';
+import '../../presentation/controllers/playlist/playlist_controller.dart';
 import '../widgets/snackbar.dart';
 import '/services/synced_lyrics_service.dart';
-import '/ui/screens/Settings/settings_screen_controller.dart';
+import '/presentation/controllers/settings/settings_controller.dart';
 import '../../services/windows_audio_service.dart';
 import '../../utils/helper.dart';
 import '/models/media_Item_builder.dart';
-import '../screens/Home/home_screen_controller.dart';
+import '../../presentation/controllers/home/home_controller.dart';
 import '../widgets/sliding_up_panel.dart';
 import '/models/durationstate.dart';
 import '/services/music_service.dart';
@@ -252,7 +252,7 @@ class PlayerController extends GetxController
         }
 
         // reset player visible state when player is in gesture mode
-        if (Get.find<SettingsScreenController>().playerUi.value == 1) {
+        if (Get.find<SettingsController>().playerUi.value == 1) {
           gesturePlayerVisibleState.value = 2;
         }
       }
@@ -335,7 +335,7 @@ class PlayerController extends GetxController
         await _audioHandler.customAction("playByIndex", {"index": 0});
       } else {
         if (Hive.box("AppPrefs").get("discoverContentType") == "BOLI") {
-          Get.find<HomeScreenController>()
+          Get.find<HomeController>()
               .changeDiscoverContent("BOLI", songId: mediaItem!.id);
         }
       }
@@ -371,7 +371,7 @@ class PlayerController extends GetxController
     //for changing home content based on last interation
     Future.delayed(const Duration(seconds: 3), () {
       if (Hive.box("AppPrefs").get("discoverContentType") == "BOLI") {
-        Get.find<HomeScreenController>()
+        Get.find<HomeController>()
             .changeDiscoverContent("BOLI", songId: mediaItems[index].id);
       }
     });
@@ -489,7 +489,7 @@ class PlayerController extends GetxController
 
     if (initFlagForPlayer) {
       final miniPlayerHeight = isWideScreen ? 105.0 : 75.0;
-      if (Get.find<SettingsScreenController>().isBottomNavBarEnabled.isFalse ||
+      if (Get.find<SettingsController>().isBottomNavBarEnabled.isFalse ||
           getCurrentRouteName() != '/homeScreen') {
         playerPanelMinHeight.value =
             miniPlayerHeight + Get.mediaQuery.viewPadding.bottom;
@@ -553,7 +553,7 @@ class PlayerController extends GetxController
     if (initFlagForPlayer) return;
     _audioHandler.playbackState.value.playing ? pause() : play();
     // for gesture player
-    if (Get.find<SettingsScreenController>().playerUi.value == 1) {
+    if (Get.find<SettingsController>().playerUi.value == 1) {
       gesturePlayerVisibleState.value =
           _audioHandler.playbackState.value.playing ? 0 : 1;
       gesturePlayerStateAnimationController?.reset();
@@ -652,7 +652,7 @@ class PlayerController extends GetxController
         ? box.put(currMediaItem.id, MediaItemBuilder.toJson(currMediaItem))
         : box.delete(currMediaItem.id);
     try {
-      final playlistController = Get.find<PlaylistScreenController>(
+      final playlistController = Get.find<PlaylistController>(
           tag: const Key("LIBFAV").hashCode.toString());
       isCurrentSongFav.isFalse
           ? playlistController.addNRemoveItemsinList(currMediaItem,
@@ -663,7 +663,7 @@ class PlayerController extends GetxController
       // ignore: empty_catches
     } catch (e) {}
     isCurrentSongFav.value = !isCurrentSongFav.value;
-    if (Get.find<SettingsScreenController>()
+    if (Get.find<SettingsController>()
             .autoDownloadFavoriteSongEnabled
             .isTrue &&
         isCurrentSongFav.isTrue) {

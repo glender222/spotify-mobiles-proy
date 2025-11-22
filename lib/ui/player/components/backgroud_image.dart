@@ -4,7 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../screens/Settings/settings_screen_controller.dart';
+import '../../../presentation/controllers/settings/settings_controller.dart';
 import '../../utils/theme_controller.dart';
 import '../player_controller.dart';
 
@@ -25,7 +25,7 @@ class BackgroudImage extends StatelessWidget {
                     .contains('file')
                 ? Builder(builder: (context) {
                     final imgFile = File(
-                        "${Get.find<SettingsScreenController>().supportDirPath}/thumbnails/${playerController.currentSong.value!.id}.png");
+                        "${Get.find<SettingsController>().supportDirPath}/thumbnails/${playerController.currentSong.value!.id}.png");
                     return FutureBuilder(
                       future: imgFile.exists(),
                       builder: (context, snapshot) {
@@ -34,7 +34,7 @@ class BackgroudImage extends StatelessWidget {
                             snapshot.data == true) {
 
                           /// if theme mode is dynamic then set the theme with image
-                          if (Get.find<SettingsScreenController>()
+                          if (Get.find<SettingsController>()
                                   .themeModetype
                                   .value ==
                               ThemeType.dynamic) {
@@ -58,7 +58,7 @@ class BackgroudImage extends StatelessWidget {
                 : CachedNetworkImage(
                     memCacheHeight: cacheHeight,
                     imageBuilder: (context, imageProvider) {
-                      Get.find<SettingsScreenController>()
+                      Get.find<SettingsController>()
                                   .themeModetype
                                   .value ==
                               ThemeType.dynamic

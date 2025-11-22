@@ -5,16 +5,16 @@ import '/ui/screens/Artists/artist_screen.dart' show AboutArtist;
 import '../../navigator.dart';
 import '../../widgets/loader.dart';
 import '../../widgets/separate_tab_item_widget.dart';
-import 'artist_screen_controller.dart';
+import '../../../presentation/controllers/artist/artist_controller.dart';
 
 class ArtistScreenBN extends StatelessWidget {
   const ArtistScreenBN(
-      {super.key, required this.artistScreenController, required this.tag});
-  final ArtistScreenController artistScreenController;
+      {super.key, required this.artistController, required this.tag});
+  final ArtistController artistController;
   final String tag;
   @override
   Widget build(BuildContext context) {
-    final separatedContent = artistScreenController.sepataredContent;
+    final separatedContent = artistController.separatedContent;
     return Scaffold(
       appBar: AppBar(
           toolbarHeight: 85,
@@ -32,8 +32,8 @@ class ArtistScreenBN extends StatelessWidget {
             splashFactory: NoSplash.splashFactory,
             enableFeedback: true,
             isScrollable: true,
-            controller: artistScreenController.tabController!,
-            onTap: artistScreenController.onDestinationSelected,
+            controller: artistController.tabController!,
+            onTap: artistController.onDestinationSelected,
             tabs:
                 ["about".tr, "songs".tr, "videos".tr, "albums".tr, "singles".tr]
                     .map((e) => Tab(
@@ -42,18 +42,18 @@ class ArtistScreenBN extends StatelessWidget {
                     .toList(),
           ),
           title: Obx(
-            () => artistScreenController.isArtistContentFetced.isTrue
+            () => artistController.isArtistContentFetched.isTrue
                 ? Padding(
                     padding: const EdgeInsets.only(top: 25.0),
-                    child: Text(artistScreenController.artist_.name,
+                    child: Text(artistController.artist_.name,
                         style: Theme.of(context).textTheme.titleLarge),
                   )
                 : const SizedBox.shrink(),
           )),
       body: Obx(
         () => TabBarView(
-          controller: artistScreenController.tabController,
-          children: artistScreenController.isArtistContentFetced.isFalse
+          controller: artistController.tabController,
+          children: artistController.isArtistContentFetched.isFalse
               ? List.generate(
                   5,
                   (index) => const Center(
@@ -61,16 +61,15 @@ class ArtistScreenBN extends StatelessWidget {
                       ))
               : [
                   AboutArtist(
-                    artistScreenController: artistScreenController,
+                    artistController: artistController,
                     padding: const EdgeInsets.only(
                         top: 10, left: 15, right: 5, bottom: 200),
                   ),
                   ...["Songs", "Videos", "Albums", "Singles"].map(
                     (item) {
-                      if (artistScreenController
-                              .isSeparatedArtistContentFetced.isFalse &&
-                          artistScreenController
-                                  .navigationRailCurrentIndex.value !=
+                      if (artistController
+                              .isSeparatedArtistContentFetched.isFalse &&
+                          artistController.navigationRailCurrentIndex.value !=
                               0) {
                         return const Center(child: LoadingIndicator());
                       }
@@ -85,14 +84,13 @@ class ArtistScreenBN extends StatelessWidget {
                               : [],
                           title: item,
                           scrollController: item == "Songs"
-                              ? artistScreenController.songScrollController
+                              ? artistController.songScrollController
                               : item == "Videos"
-                                  ? artistScreenController.videoScrollController
+                                  ? artistController.videoScrollController
                                   : item == "Albums"
-                                      ? artistScreenController
-                                          .albumScrollController
+                                      ? artistController.albumScrollController
                                       : item == "Singles"
-                                          ? artistScreenController
+                                          ? artistController
                                               .singlesScrollController
                                           : null,
                         ),
