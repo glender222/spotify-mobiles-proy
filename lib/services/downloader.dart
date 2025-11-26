@@ -34,15 +34,14 @@ class Downloader extends GetxService {
   RxList<MediaItem> songQueue = <MediaItem>[].obs;
 
   Future<bool> checkPermissionNDir() async {
-    final SettingsController = Get.find<SettingsController>();
+    final settingsController = Get.find<SettingsController>();
 
-    if (!SettingsController.isCurrentPathsupportDownDir &&
+    if (!settingsController.isCurrentPathsupportDownDir &&
         !await PermissionService.getExtStoragePermission()) {
       return false;
     }
 
-    final dirPath =
-        Get.find<SettingsController>().downloadLocationPath.string;
+    final dirPath = Get.find<SettingsController>().downloadLocationPath.string;
     final directory = Directory(dirPath);
     if (!await directory.exists()) {
       await directory.create(recursive: true);
@@ -151,8 +150,8 @@ class Downloader extends GetxService {
   Future<void> writeFileStream(MediaItem song) async {
     Completer<void> complete = Completer();
 
-    final SettingsController = Get.find<SettingsController>();
-    final downloadingFormat = SettingsController.downloadingFormat.string;
+    final settingsController = Get.find<SettingsController>();
+    final downloadingFormat = settingsController.downloadingFormat.string;
 
     final playerResponse = await StreamProvider.fetch(song.id);
     // if (!playerResponse.playable) {
@@ -184,7 +183,7 @@ class Downloader extends GetxService {
         ? playerResponse.highestBitrateOpusAudio!
         : playerResponse.highestBitrateMp4aAudio!;
 
-    final dirPath = SettingsController.downloadLocationPath.string;
+    final dirPath = Get.find<SettingsController>().downloadLocationPath.string;
     final actualDownformat =
         requiredAudioStream.audioCodec.name.contains("mp") ? "m4a" : "opus";
     final RegExp invalidChar =
@@ -220,7 +219,7 @@ class Downloader extends GetxService {
         // Save Thumbnail
         try {
           final thumbnailPath =
-              "${SettingsController.supportDirPath}/thumbnails/${song.id}.png";
+              "${Get.find<SettingsController>().supportDirPath}/thumbnails/${song.id}.png";
           await _dio.downloadUri(song.artUri!, thumbnailPath);
           // ignore: empty_catches
         } catch (e) {}

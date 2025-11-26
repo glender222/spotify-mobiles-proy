@@ -8,7 +8,9 @@ import 'package:harmonymusic/ui/widgets/playlist_album_scroll_behaviour.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:widget_marquee/widget_marquee.dart';
 
-import '../../../services/downloader.dart';
+import '../../../domain/download/usecases/download_playlist_usecase.dart';
+import '../../../domain/download/usecases/get_playlist_downloading_progress_usecase.dart';
+import '../../../domain/download/usecases/get_current_playlist_id_usecase.dart';
 import '../../player/player_controller.dart';
 import '../../widgets/loader.dart';
 import '../../widgets/snackbar.dart';
@@ -280,75 +282,71 @@ class AlbumScreen extends StatelessWidget {
                                               )),
 
                                           // Download button
-                                          GetX<Downloader>(
-                                              builder: (controller) {
-                                            final id = albumController
-                                                .album.value.browseId;
-                                            return IconButton(
-                                              tooltip: "downloadAlbumSongs".tr,
-                                              onPressed: () {
-                                                if (albumController
-                                                    .isDownloaded.isTrue) {
-                                                  return;
-                                                }
-                                                controller.downloadPlaylist(
-                                                    id,
-                                                    albumController.songList
-                                                        .toList());
-                                              },
-                                              icon: albumController
-                                                      .isDownloaded.isTrue
-                                                  ? const Icon(
-                                                      Icons.download_done)
-                                                  : controller.playlistQueue
-                                                              .containsKey(
-                                                                  id) &&
-                                                          controller
-                                                                  .currentPlaylistId
-                                                                  .toString() ==
-                                                              id
-                                                      ? Stack(
-                                                          children: [
-                                                            Center(
-                                                                child: Text(
-                                                                    "${controller.playlistDownloadingProgress.value}/${albumController.songList.length}",
-                                                                    style: Theme.of(
-                                                                            context)
-                                                                        .textTheme
-                                                                        .titleMedium!
-                                                                        .copyWith(
-                                                                            fontSize:
-                                                                                10,
-                                                                            fontWeight:
-                                                                                FontWeight.bold))),
-                                                            const Center(
-                                                                child:
-                                                                    LoadingIndicator(
-                                                              dimension: 30,
-                                                            ))
-                                                          ],
-                                                        )
-                                                      : controller.playlistQueue
-                                                              .containsKey(id)
-                                                          ? const Stack(
-                                                              children: [
-                                                                Center(
-                                                                    child: Icon(
-                                                                  Icons
-                                                                      .hourglass_bottom,
-                                                                  size: 20,
-                                                                )),
-                                                                Center(
-                                                                    child:
-                                                                        LoadingIndicator(
-                                                                  dimension: 30,
-                                                                ))
-                                                              ],
-                                                            )
-                                                          : const Icon(
-                                                              Icons.download),
-                                            );
-                                          }),
+                                          StreamBuilder<int>(
+                                              stream: Get.find<
+                                                  GetPlaylistDownloadingProgressUseCase>()(),
+                                              builder:
+                                                  (context, progressSnapshot) {
+                                                return StreamBuilder<String>(
+                                                    stream: Get.find<
+                                                        GetCurrentPlaylistIdUseCase>()(),
+                                                    builder:
+                                                        (context, idSnapshot) {
+                                                      final id = albumController
+                                                          .album.value.browseId;
+                                                      final currentId =
+                                                          idSnapshot.data ?? '';
+                                                      final isDownloading =
+                                                          currentId == id &&
+                                                              currentId
+                                                                  .isNotEmpty;
+                                                      final progress =
+                                                          progressSnapshot
+                                                                  .data ??
+                                                              0;
+
+                                                      return IconButton(
+                                                        tooltip:
+                                                            "downloadAlbumSongs"
+                                                                .tr,
+                                                        onPressed: () {
+                                                          if (albumController
+                                                              .isDownloaded
+                                                              .isTrue) {
+                                                            return;
+                                                          }
+                                                          Get.find<
+                                                                  DownloadPlaylistUseCase>()(
+                                                              id,
+                                                              albumController
+                                                                  .songList
+                                                                  .toList());
+                                                        },
+                                                        icon: albumController
+                                                                .isDownloaded
+                                                                .isTrue
+                                                            ? const Icon(Icons
+                                                                .download_done)
+                                                            : isDownloading
+                                                                ? Stack(
+                                                                    children: [
+                                                                      Center(
+                                                                          child: Text(
+                                                                              "$progress/${albumController.songList.length}",
+                                                                              style: Theme.of(context).textTheme.titleMedium!.copyWith(fontSize: 10, fontWeight: FontWeight.bold))),
+                                                                      const Center(
+                                                                          child:
+                                                                              LoadingIndicator(
+                                                                        dimension:
+                                                                            30,
+                                                                      ))
+                                                                    ],
+                                                                  )
+                                                                : const Icon(Icons
+                                                                    .download),
+                                                      );
+                                                    });
+                                              }),
 
                                           // if (albumController
                                           //     .isAddedToLibrary.isTrue)

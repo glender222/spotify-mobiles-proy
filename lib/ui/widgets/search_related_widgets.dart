@@ -2,7 +2,7 @@ import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../screens/Search/search_result_screen_controller.dart';
+import '../../../presentation/controllers/search/search_result_controller.dart';
 import '/models/album.dart';
 import '/models/artist.dart';
 // import '/models/playlist.dart';
@@ -15,8 +15,8 @@ class ResultWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final SearchResultScreenController searchResScrController =
-        Get.find<SearchResultScreenController>();
+    final SearchResultController searchResScrController =
+        Get.find<SearchResultController>();
     final topPadding = context.isLandscape ? 50.0 : 80.0;
     return Obx(
       () => Center(
@@ -56,7 +56,7 @@ class ResultWidget extends StatelessWidget {
   }
 
   List<Widget> generateWidgetList(
-      SearchResultScreenController searchResScrController) {
+      SearchResultController searchResScrController) {
     List<Widget> list = [];
     for (dynamic item in searchResScrController.resultContent.entries) {
       if (item.key == "Songs" || item.key == "Videos") {

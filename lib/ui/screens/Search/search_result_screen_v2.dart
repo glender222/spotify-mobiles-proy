@@ -6,15 +6,15 @@ import 'package:harmonymusic/ui/widgets/search_related_widgets.dart';
 
 import '../../navigator.dart';
 import '../../widgets/separate_tab_item_widget.dart';
-import 'search_result_screen_controller.dart';
+import '../../../presentation/controllers/search/search_result_controller.dart';
 
 class SearchResultScreenBN extends StatelessWidget {
   const SearchResultScreenBN({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final SearchResultScreenController searchResScrController =
-        Get.find<SearchResultScreenController>();
+    final SearchResultController searchResScrController =
+        Get.find<SearchResultController>();
     final topPadding = context.isLandscape ? 50.0 : 80.0;
     return Scaffold(
       body: Padding(

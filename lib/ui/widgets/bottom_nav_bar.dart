@@ -7,10 +7,10 @@ class BottomNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final HomeController = Get.find<HomeController>();
+    final homeController = Get.find<HomeController>();
     return Obx(() => NavigationBar(
-            onDestinationSelected: HomeController.onBottonBarTabSelected,
-            selectedIndex: HomeController.tabIndex.toInt(),
+            onDestinationSelected: homeController.onBottonBarTabSelected,
+            selectedIndex: homeController.tabIndex.toInt(),
             backgroundColor: Theme.of(context).primaryColor,
             indicatorColor: Theme.of(context).colorScheme.secondary,
             labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,

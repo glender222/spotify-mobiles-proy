@@ -6,7 +6,6 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:terminate_restart/terminate_restart.dart';
 
-import '/ui/screens/Search/search_screen_controller.dart';
 import '/utils/get_localization.dart';
 import '/services/activity_service.dart';
 import '/services/downloader.dart';
@@ -19,6 +18,8 @@ import '/ui/player/player_controller.dart';
 import 'presentation/controllers/settings/settings_controller.dart';
 import '/ui/utils/theme_controller.dart';
 import 'presentation/controllers/home/home_controller.dart';
+import '/presentation/controllers/search/search_controller.dart'
+    as app_controllers;
 import 'ui/screens/Library/library_controller.dart';
 import 'utils/system_tray.dart';
 import 'utils/update_check_flag_file.dart';
@@ -320,7 +321,7 @@ Future<void> startApplicationServices() async {
   Get.lazyPut(() => SettingsController(), fenix: true);
 
   if (GetPlatform.isDesktop) {
-    Get.lazyPut(() => SearchController(), fenix: true);
+    Get.lazyPut(() => app_controllers.SearchController(), fenix: true);
     Get.put(DesktopSystemTray());
   }
 }

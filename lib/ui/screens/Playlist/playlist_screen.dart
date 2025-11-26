@@ -8,7 +8,9 @@ import 'package:widget_marquee/widget_marquee.dart';
 import '/models/playling_from.dart';
 import '/models/thumbnail.dart';
 import '/ui/widgets/playlist_album_scroll_behaviour.dart';
-import '../../../services/downloader.dart';
+import '../../../domain/download/usecases/download_playlist_usecase.dart';
+import '../../../domain/download/usecases/get_playlist_downloading_progress_usecase.dart';
+import '../../../domain/download/usecases/get_current_playlist_id_usecase.dart';
 import '../../navigator.dart';
 import '../../player/player_controller.dart';
 import '../../widgets/create_playlist_dialog.dart';
@@ -27,10 +29,9 @@ class PlaylistScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tag = key.hashCode.toString();
-    final playlistController =
-        (Get.isRegistered<PlaylistController>(tag: tag))
-            ? Get.find<PlaylistController>(tag: tag)
-            : Get.put(PlaylistController(), tag: tag);
+    final playlistController = (Get.isRegistered<PlaylistController>(tag: tag))
+        ? Get.find<PlaylistController>(tag: tag)
+        : Get.put(PlaylistController(), tag: tag);
     final size = MediaQuery.of(context).size;
     final playerController = Get.find<PlayerController>();
     final landscape = size.width > size.height;
@@ -66,7 +67,8 @@ class PlaylistScreen extends StatelessWidget {
                                 (size.width - 100);
                         return Opacity(
                           opacity: opacityValue < 0 ||
-                                  playlistController.isSearchingOn.isTrue && !landscape
+                                  playlistController.isSearchingOn.isTrue &&
+                                      !landscape
                               ? 0
                               : opacityValue,
                           child: DecoratedBox(
@@ -121,7 +123,7 @@ class PlaylistScreen extends StatelessWidget {
                         SizedBox(
                           width: 50,
                           child: IconButton(
-                            tooltip: "back".tr,
+                              tooltip: "back".tr,
                               onPressed: () {
                                 Navigator.of(context).pop();
                               },
@@ -273,8 +275,10 @@ class PlaylistScreen extends StatelessWidget {
                                                       : "removeFromLibrary".tr,
                                                   splashRadius: 10,
                                                   onPressed: () {
-                                                    final add = playlistController
-                                                        .isAddedToLibrary.isFalse;
+                                                    final add =
+                                                        playlistController
+                                                            .isAddedToLibrary
+                                                            .isFalse;
                                                     playlistController
                                                         .addNremoveFromLibrary(
                                                             playlistController
@@ -285,9 +289,8 @@ class PlaylistScreen extends StatelessWidget {
                                                         return;
                                                       }
 
-                                                      ScaffoldMessenger.of(
-                                                              context)
-                                                          .showSnackBar(snackbar(
+                                                      ScaffoldMessenger.of(context).showSnackBar(
+                                                          snackbar(
                                                               context,
                                                               value
                                                                   ? add
@@ -308,7 +311,7 @@ class PlaylistScreen extends StatelessWidget {
                                                       : Icons.bookmark_added))),
                                           // Play button
                                           IconButton(
-                                            tooltip: "play".tr,
+                                              tooltip: "play".tr,
                                               onPressed: () {
                                                 playerController.playPlayListSong(
                                                     List<MediaItem>.from(
@@ -317,7 +320,9 @@ class PlaylistScreen extends StatelessWidget {
                                                     0,
                                                     playfrom: PlaylingFrom(
                                                         name: playlistController
-                                                            .playlist.value.title,
+                                                            .playlist
+                                                            .value
+                                                            .title,
                                                         type: PlaylingFromType
                                                             .PLAYLIST));
                                               },
@@ -339,10 +344,12 @@ class PlaylistScreen extends StatelessWidget {
                                                             .toList())
                                                     .whenComplete(() {
                                                   if (context.mounted) {
-                                                    ScaffoldMessenger.of(context)
+                                                    ScaffoldMessenger.of(
+                                                            context)
                                                         .showSnackBar(snackbar(
                                                             context,
-                                                            "songEnqueueAlert".tr,
+                                                            "songEnqueueAlert"
+                                                                .tr,
                                                             size: SanckBarSize
                                                                 .MEDIUM));
                                                   }
@@ -370,7 +377,9 @@ class PlaylistScreen extends StatelessWidget {
                                                     songsToplay, 0,
                                                     playfrom: PlaylingFrom(
                                                         name: playlistController
-                                                            .playlist.value.title,
+                                                            .playlist
+                                                            .value
+                                                            .title,
                                                         type: PlaylingFromType
                                                             .PLAYLIST));
                                               },
@@ -382,85 +391,86 @@ class PlaylistScreen extends StatelessWidget {
                                                     .color,
                                               )),
                                           // Download button
-                                          GetX<Downloader>(builder: (controller) {
-                                            final id = playlistController
-                                                .playlist.value.playlistId;
-                                            return IconButton(
-                                              tooltip: "downloadPlaylist".tr,
-                                              onPressed: () {
-                                                if (playlistController
-                                                    .isDownloaded.isTrue) {
-                                                  return;
-                                                }
-                                                controller.downloadPlaylist(
-                                                    id,
-                                                    playlistController.songList
-                                                        .toList());
-                                              },
-                                              icon: playlistController
-                                                      .isDownloaded.isTrue
-                                                  ? const Icon(
-                                                      Icons.download_done)
-                                                  : controller.playlistQueue
-                                                              .containsKey(id) &&
-                                                          controller
-                                                                  .currentPlaylistId
-                                                                  .toString() ==
-                                                              id
-                                                      ? Stack(
-                                                          children: [
-                                                            Center(
-                                                                child: Text(
-                                                                    "${controller.playlistDownloadingProgress.value}/${playlistController.songList.length}",
-                                                                    style: Theme.of(
-                                                                            context)
-                                                                        .textTheme
-                                                                        .titleMedium!
-                                                                        .copyWith(
-                                                                            fontSize:
-                                                                                10,
-                                                                            fontWeight:
-                                                                                FontWeight.bold))),
-                                                            const Center(
-                                                                child:
-                                                                    LoadingIndicator(
-                                                              dimension: 30,
-                                                            ))
-                                                          ],
-                                                        )
-                                                      : controller.playlistQueue
-                                                              .containsKey(id)
-                                                          ? const Stack(
-                                                              children: [
-                                                                Center(
-                                                                    child: Icon(
-                                                                  Icons
-                                                                      .hourglass_bottom,
-                                                                  size: 20,
-                                                                )),
-                                                                Center(
-                                                                    child:
-                                                                        LoadingIndicator(
-                                                                  dimension: 30,
-                                                                ))
-                                                              ],
-                                                            )
-                                                          : const Icon(
-                                                              Icons.download),
-                                            );
-                                          }),
+                                          // Download button
+                                          StreamBuilder<int>(
+                                              stream: Get.find<
+                                                  GetPlaylistDownloadingProgressUseCase>()(),
+                                              builder:
+                                                  (context, progressSnapshot) {
+                                                return StreamBuilder<String>(
+                                                    stream: Get.find<
+                                                        GetCurrentPlaylistIdUseCase>()(),
+                                                    builder:
+                                                        (context, idSnapshot) {
+                                                      final id =
+                                                          playlistController
+                                                              .playlist
+                                                              .value
+                                                              .playlistId;
+                                                      final currentId =
+                                                          idSnapshot.data ?? '';
+                                                      final isDownloading =
+                                                          currentId == id &&
+                                                              currentId
+                                                                  .isNotEmpty;
+                                                      final progress =
+                                                          progressSnapshot
+                                                                  .data ??
+                                                              0;
+
+                                                      return IconButton(
+                                                        tooltip:
+                                                            "downloadPlaylist"
+                                                                .tr,
+                                                        onPressed: () {
+                                                          if (playlistController
+                                                              .isDownloaded
+                                                              .isTrue) {
+                                                            return;
+                                                          }
+                                                          Get.find<
+                                                                  DownloadPlaylistUseCase>()(
+                                                              id,
+                                                              playlistController
+                                                                  .songList
+                                                                  .toList());
+                                                        },
+                                                        icon: playlistController
+                                                                .isDownloaded
+                                                                .isTrue
+                                                            ? const Icon(Icons
+                                                                .download_done)
+                                                            : isDownloading
+                                                                ? Stack(
+                                                                    children: [
+                                                                      Center(
+                                                                          child: Text(
+                                                                              "$progress/${playlistController.songList.length}",
+                                                                              style: Theme.of(context).textTheme.titleMedium!.copyWith(fontSize: 10, fontWeight: FontWeight.bold))),
+                                                                      const Center(
+                                                                          child:
+                                                                              LoadingIndicator(
+                                                                        dimension:
+                                                                            30,
+                                                                      ))
+                                                                    ],
+                                                                  )
+                                                                : const Icon(Icons
+                                                                    .download),
+                                                      );
+                                                    });
+                                              }),
 
                                           if (playlistController
                                               .isAddedToLibrary.isTrue)
                                             IconButton(
-                                                tooltip:
-                                                    "syncPlaylistSongs".tr,
+                                                tooltip: "syncPlaylistSongs".tr,
                                                 onPressed: () {
                                                   playlistController
                                                       .syncPlaylistSongs();
                                                 },
-                                                icon:
-                                                    const Icon(Icons.cloud_sync)),
+                                                icon: const Icon(
+                                                    Icons.cloud_sync)),
                                           if (playlistController
                                               .playlist.value.isPipedPlaylist)
                                             IconButton(
@@ -494,22 +504,24 @@ class PlaylistScreen extends StatelessWidget {
                                           if (playlistController
                                               .playlist.value.isCloudPlaylist)
                                             IconButton(
-                                              tooltip:
-                                                  "sharePlaylist".tr,
-                                              visualDensity: const VisualDensity(
+                                              tooltip: "sharePlaylist".tr,
+                                              visualDensity:
+                                                  const VisualDensity(
                                                 vertical: -3,
                                               ),
                                               splashRadius: 10,
                                               onPressed: () {
-                                                final content = playlistController
-                                                    .playlist.value;
+                                                final content =
+                                                    playlistController
+                                                        .playlist.value;
                                                 if (content.isPipedPlaylist) {
                                                   Share.share(
                                                       "https://piped.video/playlist?list=${content.playlistId}");
                                                 } else {
                                                   final isPlaylistIdPrefixAvlbl =
                                                       content.playlistId
-                                                              .substring(0, 2) ==
+                                                              .substring(
+                                                                  0, 2) ==
                                                           "VL";
                                                   String url =
                                                       "https://youtube.com/playlist?list=";
@@ -518,7 +530,8 @@ class PlaylistScreen extends StatelessWidget {
                                                       ? url +
                                                           content.playlistId
                                                               .substring(2)
-                                                      : url + content.playlistId;
+                                                      : url +
+                                                          content.playlistId;
                                                   Share.share(url);
                                                 }
                                               },
@@ -534,7 +547,8 @@ class PlaylistScreen extends StatelessWidget {
                                                 context: context,
                                                 builder: (dialogContext) =>
                                                     PlaylistExportDialog(
-                                                  controller: playlistController,
+                                                  controller:
+                                                      playlistController,
                                                   parentContext: context,
                                                 ),
                                               );

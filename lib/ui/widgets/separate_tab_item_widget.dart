@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:harmonymusic/ui/widgets/modification_list.dart';
 
 import '../../../presentation/controllers/artist/artist_controller.dart';
-import '../screens/Search/search_result_screen_controller.dart';
+import '../../../presentation/controllers/search/search_result_controller.dart';
 import 'list_widget.dart';
 import 'loader.dart';
 import 'sort_widget.dart';
@@ -36,8 +36,8 @@ class SeparateTabItemWidget extends StatelessWidget {
         Get.isRegistered<ArtistController>(tag: artistControllerTag)
             ? Get.find<ArtistController>(tag: artistControllerTag)
             : null;
-    final searchResController = Get.isRegistered<SearchResultScreenController>()
-        ? Get.find<SearchResultScreenController>()
+    final searchResController = Get.isRegistered<SearchResultController>()
+        ? Get.find<SearchResultController>()
         : null;
     return Padding(
       padding: EdgeInsets.only(top: topPadding, left: 5),
@@ -97,7 +97,7 @@ class SeparateTabItemWidget extends StatelessWidget {
               : const SizedBox.shrink(),
           isCompleteList
               ? isResultWidget
-                  ? GetX<SearchResultScreenController>(builder: (controller) {
+                  ? GetX<SearchResultController>(builder: (controller) {
                       if (controller.isSeparatedResultContentFetced.isTrue) {
                         return ListWidget(
                           controller.separatedResultContent[title],

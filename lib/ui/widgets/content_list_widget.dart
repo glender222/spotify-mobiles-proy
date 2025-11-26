@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../screens/Search/search_result_screen_controller.dart';
+import '../../../presentation/controllers/search/search_result_controller.dart';
 import '/ui/widgets/content_list_widget_item.dart';
 
 class ContentListWidget extends StatelessWidget {
@@ -40,7 +40,7 @@ class ContentListWidget extends StatelessWidget {
                     ? TextButton(
                         onPressed: () {
                           final scrresController =
-                              Get.find<SearchResultScreenController>();
+                              Get.find<SearchResultController>();
                           scrresController.viewAllCallback(content.title);
                         },
                         child: Text("viewAll".tr,

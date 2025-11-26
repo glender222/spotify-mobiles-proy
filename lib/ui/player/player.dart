@@ -24,14 +24,14 @@ class Player extends StatelessWidget {
     printINFO("player");
     final size = MediaQuery.of(context).size;
     final PlayerController playerController = Get.find<PlayerController>();
-    final SettingsController = Get.find<SettingsController>();
+    final settingsController = Get.find<SettingsController>();
     return Scaffold(
       /// SlidingUpPanel is used to create a panel that can slide up and down
       /// It is used to show the current queue panel in mobile
       body: Obx(
         () => SlidingUpPanel(
           boxShadow: const [],
-          minHeight: SettingsController.playerUi.value == 0
+          minHeight: settingsController.playerUi.value == 0
               ? 65 + Get.mediaQuery.padding.bottom
               : 0,
           maxHeight: size.height,
@@ -200,7 +200,7 @@ class Player extends StatelessWidget {
 
           /// show player ui based on selected player ui in settings
           /// Gesture player is only applicable for mobile
-          body: SettingsController.playerUi.value == 0
+          body: settingsController.playerUi.value == 0
               ? const StandardPlayer()
               : const GesturePlayer(),
         ),

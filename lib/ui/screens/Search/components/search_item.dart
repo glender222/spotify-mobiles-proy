@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '/ui/screens/Search/search_screen_controller.dart';
+import '/presentation/controllers/search/search_controller.dart'
+    as app_controllers;
 
 import '../../../navigator.dart';
 
@@ -12,7 +13,7 @@ class SearchItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final searchScreenController = Get.find<SearchScreenController>();
+    final searchScreenController = Get.find<app_controllers.SearchController>();
     return ListTile(
       contentPadding: const EdgeInsets.only(left: 10, right: 20),
       onTap: () {

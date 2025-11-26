@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'search_item.dart';
-import '/ui/screens/Search/search_screen_controller.dart';
+import '/presentation/controllers/search/search_controller.dart'
+    as app_controllers;
 
 import '../../../navigator.dart';
 
@@ -11,7 +12,7 @@ class DesktopSearchBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final searchScreenController = Get.find<SearchScreenController>();
+    final searchScreenController = Get.find<app_controllers.SearchController>();
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [

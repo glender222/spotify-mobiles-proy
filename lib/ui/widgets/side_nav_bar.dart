@@ -10,7 +10,7 @@ class SideNavBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final isMobileOrTabScreen = size.width < 480;
-    final HomeController = Get.find<HomeController>();
+    final homeController = Get.find<HomeController>();
     return Align(
       alignment: Alignment.topCenter,
       child: isMobileOrTabScreen
@@ -21,9 +21,8 @@ class SideNavBar extends StatelessWidget {
                   () => NavigationRail(
                     useIndicator: !isMobileOrTabScreen,
                     selectedIndex:
-                        HomeController.tabIndex.value, //_selectedIndex,
-                    onDestinationSelected:
-                        HomeController.onSideBarTabSelected,
+                        homeController.tabIndex.value, //_selectedIndex,
+                    onDestinationSelected: homeController.onSideBarTabSelected,
                     minWidth: 60,
                     leading: SizedBox(height: size.height < 750 ? 30 : 60),
                     minExtendedWidth: 250,
@@ -57,7 +56,7 @@ class SideNavBar extends StatelessWidget {
           : Padding(
               padding: const EdgeInsets.only(bottom: 100.0),
               child: SideBarAnimated(
-                onTap: HomeController.onSideBarTabSelected,
+                onTap: homeController.onSideBarTabSelected,
                 sideBarColor: Theme.of(context).primaryColor.withAlpha(250),
                 animatedContainerColor: Theme.of(context).colorScheme.secondary,
                 hoverColor:

@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../Search/components/desktop_search_bar.dart';
-import '/ui/screens/Search/search_screen_controller.dart';
+import '/presentation/controllers/search/search_controller.dart'
+    as app_controllers;
 import '/ui/widgets/animated_screen_transition.dart';
 import '../Library/library_combined.dart';
 import '../../widgets/side_nav_bar.dart';
@@ -25,17 +26,15 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final PlayerController playerController = Get.find<PlayerController>();
-    final HomeController HomeController =
-        Get.find<HomeController>();
-    final SettingsController SettingsController =
-        Get.find<SettingsController>();
+    final homeController = Get.find<HomeController>();
+    final settingsController = Get.find<SettingsController>();
 
     return Scaffold(
         floatingActionButton: Obx(
-          () => ((HomeController.tabIndex.value == 0 &&
+          () => ((homeController.tabIndex.value == 0 &&
                           !GetPlatform.isDesktop) ||
-                      HomeController.tabIndex.value == 2) &&
-                  SettingsController.isBottomNavBarEnabled.isFalse
+                      homeController.tabIndex.value == 2) &&
+                  settingsController.isBottomNavBarEnabled.isFalse
               ? Obx(
                   () => Padding(
                     padding: EdgeInsets.only(
@@ -55,7 +54,7 @@ class HomeScreen extends StatelessWidget {
                                     BorderRadius.all(Radius.circular(14))),
                             elevation: 0,
                             onPressed: () async {
-                              if (HomeController.tabIndex.value == 2) {
+                              if (homeController.tabIndex.value == 2) {
                                 showDialog(
                                     context: context,
                                     builder: (context) =>
@@ -67,7 +66,7 @@ class HomeScreen extends StatelessWidget {
                               // file:///data/user/0/com.example.harmonymusic/cache/libCachedImageData/
                               //file:///data/user/0/com.example.harmonymusic/cache/just_audio_cache/
                             },
-                            child: Icon(HomeController.tabIndex.value == 2
+                            child: Icon(homeController.tabIndex.value == 2
                                 ? Icons.add
                                 : Icons.search)),
                       ),
@@ -80,7 +79,7 @@ class HomeScreen extends StatelessWidget {
           () => Row(
             children: <Widget>[
               // create a navigation rail
-              SettingsController.isBottomNavBarEnabled.isFalse
+              settingsController.isBottomNavBarEnabled.isFalse
                   ? const SideNavBar()
                   : const SizedBox(
                       width: 0,
@@ -88,13 +87,13 @@ class HomeScreen extends StatelessWidget {
               //const VerticalDivider(thickness: 1, width: 2),
               Expanded(
                 child: Obx(() => AnimatedScreenTransition(
-                    enabled: SettingsController
+                    enabled: settingsController
                         .isTransitionAnimationDisabled.isFalse,
-                    resverse: HomeController.reverseAnimationtransiton,
+                    resverse: homeController.reverseAnimationtransiton,
                     horizontalTransition:
-                        SettingsController.isBottomNavBarEnabled.isTrue,
+                        settingsController.isBottomNavBarEnabled.isTrue,
                     child: Center(
-                      key: ValueKey<int>(HomeController.tabIndex.value),
+                      key: ValueKey<int>(homeController.tabIndex.value),
                       child: const Body(),
                     ))),
               ),
@@ -111,8 +110,8 @@ class Body extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final HomeController = Get.find<HomeController>();
-    final SettingsController = Get.find<SettingsController>();
+    final homeController = Get.find<HomeController>();
+    final settingsController = Get.find<SettingsController>();
     final size = MediaQuery.of(context).size;
     final topPadding = GetPlatform.isDesktop
         ? 85.0
@@ -122,8 +121,8 @@ class Body extends StatelessWidget {
                 ? 80.0
                 : 85.0;
     final leftPadding =
-        SettingsController.isBottomNavBarEnabled.isTrue ? 20.0 : 5.0;
-    if (HomeController.tabIndex.value == 0) {
+        settingsController.isBottomNavBarEnabled.isTrue ? 20.0 : 5.0;
+    if (homeController.tabIndex.value == 0) {
       return Padding(
         padding: EdgeInsets.only(left: leftPadding),
         child: Stack(
@@ -132,14 +131,15 @@ class Body extends StatelessWidget {
               onTap: () {
                 // for Desktop search bar
                 if (GetPlatform.isDesktop) {
-                  final sscontroller = Get.find<SearchScreenController>();
+                  final sscontroller =
+                      Get.find<app_controllers.SearchController>();
                   if (sscontroller.focusNode.hasFocus) {
                     sscontroller.focusNode.unfocus();
                   }
                 }
               },
               child: Obx(
-                () => HomeController.networkError.isTrue
+                () => homeController.networkError.isTrue
                     ? SizedBox(
                         height: MediaQuery.of(context).size.height - 180,
                         child: Column(
@@ -177,7 +177,7 @@ class Body extends StatelessWidget {
                                                 BorderRadius.circular(10)),
                                         child: InkWell(
                                           onTap: () {
-                                            HomeController
+                                            homeController
                                                 .loadContentFromNetwork();
                                           },
                                           child: Text(
@@ -195,7 +195,7 @@ class Body extends StatelessWidget {
                         ),
                       )
                     : Obx(() {
-                        if (!HomeController.isContentFetched.value) {
+                        if (!homeController.isContentFetched.value) {
                           return const HomeShimmer();
                         }
                         return ListView(
@@ -203,11 +203,10 @@ class Body extends StatelessWidget {
                               EdgeInsets.only(bottom: 200, top: topPadding),
                           children: [
                             Obx(() {
-                              if (HomeController
-                                  .recentlyPlayed.isNotEmpty) {
+                              if (homeController.recentlyPlayed.isNotEmpty) {
                                 return QuickPicksWidget(
                                   content: QuickPicks(
-                                    HomeController.recentlyPlayed,
+                                    homeController.recentlyPlayed,
                                     title: "Escuchado Recientemente",
                                   ),
                                 );
@@ -215,12 +214,11 @@ class Body extends StatelessWidget {
                               return const SizedBox.shrink();
                             }),
                             Obx(() {
-                              if (HomeController
-                                  .recentPlaylists.isNotEmpty) {
+                              if (homeController.recentPlaylists.isNotEmpty) {
                                 return ContentListWidget(
                                   content: PlaylistContent(
                                     playlistList:
-                                        HomeController.recentPlaylists,
+                                        homeController.recentPlaylists,
                                     title: "Tus Playlists Recientes",
                                   ),
                                 );
@@ -228,11 +226,10 @@ class Body extends StatelessWidget {
                               return const SizedBox.shrink();
                             }),
                             Obx(() {
-                              if (HomeController
-                                  .recommendations.isNotEmpty) {
+                              if (homeController.recommendations.isNotEmpty) {
                                 return QuickPicksWidget(
                                   content: QuickPicks(
-                                    HomeController.recommendations,
+                                    homeController.recommendations,
                                     title: "Recomendaciones",
                                   ),
                                 );
@@ -240,17 +237,17 @@ class Body extends StatelessWidget {
                               return const SizedBox.shrink();
                             }),
                             Obx(() {
-                              if (HomeController
+                              if (homeController
                                   .quickPicks.value.songList.isNotEmpty) {
                                 return QuickPicksWidget(
-                                  content: HomeController.quickPicks.value,
+                                  content: homeController.quickPicks.value,
                                 );
                               }
                               return const SizedBox.shrink();
                             }),
                             Obx(() {
                               return Column(
-                                children: HomeController.middleContent
+                                children: homeController.middleContent
                                     .map((content) => ContentListWidget(
                                           content: content,
                                         ))
@@ -259,7 +256,7 @@ class Body extends StatelessWidget {
                             }),
                             Obx(() {
                               return Column(
-                                children: HomeController.fixedContent
+                                children: homeController.fixedContent
                                     .map((content) => ContentListWidget(
                                           content: content,
                                         ))
@@ -288,25 +285,25 @@ class Body extends StatelessWidget {
           ],
         ),
       );
-    } else if (HomeController.tabIndex.value == 1) {
-      return SettingsController.isBottomNavBarEnabled.isTrue
+    } else if (homeController.tabIndex.value == 1) {
+      return settingsController.isBottomNavBarEnabled.isTrue
           ? const SearchScreen()
           : const SongsLibraryWidget();
-    } else if (HomeController.tabIndex.value == 2) {
-      return SettingsController.isBottomNavBarEnabled.isTrue
+    } else if (homeController.tabIndex.value == 2) {
+      return settingsController.isBottomNavBarEnabled.isTrue
           ? const CombinedLibrary()
           : const PlaylistNAlbumLibraryWidget(isAlbumContent: false);
-    } else if (HomeController.tabIndex.value == 3) {
-      return SettingsController.isBottomNavBarEnabled.isTrue
+    } else if (homeController.tabIndex.value == 3) {
+      return settingsController.isBottomNavBarEnabled.isTrue
           ? const SettingsScreen(isBottomNavActive: true)
           : const PlaylistNAlbumLibraryWidget();
-    } else if (HomeController.tabIndex.value == 4) {
+    } else if (homeController.tabIndex.value == 4) {
       return const LibraryArtistWidget();
-    } else if (HomeController.tabIndex.value == 5) {
+    } else if (homeController.tabIndex.value == 5) {
       return const SettingsScreen();
     } else {
       return Center(
-        child: Text("${HomeController.tabIndex.value}"),
+        child: Text("${homeController.tabIndex.value}"),
       );
     }
   }
