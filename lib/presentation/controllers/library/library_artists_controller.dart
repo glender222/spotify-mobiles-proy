@@ -35,7 +35,7 @@ class LibraryArtistsController extends GetxController {
 
       isContentFetched.value = true;
     } catch (e) {
-      print('Failed to load library artists: $e');
+      printERROR('Failed to load library artists: $e');
       isContentFetched.value = true;
     }
   }

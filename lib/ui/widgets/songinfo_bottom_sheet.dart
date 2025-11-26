@@ -13,7 +13,7 @@ import '/utils/helper.dart';
 import '/services/piped_service.dart';
 import '/ui/widgets/sleep_timer_bottom_sheet.dart';
 import '/ui/player/player_controller.dart';
-import '../screens/Library/library_controller.dart';
+import '../../presentation/controllers/library/library_songs_controller.dart';
 import '/ui/widgets/add_to_playlist.dart';
 import '/ui/widgets/snackbar.dart';
 import '../../models/media_Item_builder.dart';
@@ -388,9 +388,7 @@ class SongInfoController extends GetxController
         ? box.put(song.id, MediaItemBuilder.toJson(song))
         : box.delete(song.id);
     isCurrentSongFav.value = !isCurrentSongFav.value;
-    if (Get.find<SettingsController>()
-            .autoDownloadFavoriteSongEnabled
-            .isTrue &&
+    if (Get.find<SettingsController>().autoDownloadFavoriteSongEnabled.isTrue &&
         isCurrentSongFav.isTrue) {
       Get.find<DownloadSongUseCase>().call(song);
     }

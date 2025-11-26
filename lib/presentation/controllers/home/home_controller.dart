@@ -130,12 +130,12 @@ class HomeController extends GetxController {
               albumList: (section.items as List)
                   .cast<AlbumEntity>()
                   .map((item) => Album(
-                        browseId: item.id ?? '',
-                        title: item.title ?? 'Unknown Album',
+                        browseId: item.id,
+                        title: item.title,
                         artists: [
                           {'name': item.artist ?? 'Unknown Artist'}
                         ],
-                        thumbnailUrl: item.thumbnailUrl ?? '',
+                        thumbnailUrl: item.thumbnailUrl,
                       ))
                   .toList(),
             );
@@ -145,9 +145,9 @@ class HomeController extends GetxController {
               playlistList: (section.items as List)
                   .cast<PlaylistEntity>()
                   .map((item) => Playlist(
-                        playlistId: item.id ?? '',
-                        title: item.title ?? 'Unknown Playlist',
-                        thumbnailUrl: item.thumbnailUrl ?? '',
+                        playlistId: item.id,
+                        title: item.title,
+                        thumbnailUrl: item.thumbnailUrl,
                       ))
                   .toList(),
             );

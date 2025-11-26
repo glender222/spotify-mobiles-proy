@@ -20,7 +20,7 @@ import '../../widgets/snackbar.dart';
 import '../../widgets/song_list_tile.dart';
 import '../../widgets/songinfo_bottom_sheet.dart';
 import '../../widgets/sort_widget.dart';
-import '../Library/library_controller.dart';
+import '../../../presentation/controllers/library/library_playlists_controller.dart';
 import '../../../presentation/controllers/playlist/playlist_controller.dart';
 
 class PlaylistScreen extends StatelessWidget {

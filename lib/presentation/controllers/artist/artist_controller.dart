@@ -14,7 +14,7 @@ import '../../../ui/widgets/sort_widget.dart';
 import '../../../ui/widgets/add_to_playlist.dart';
 import '../../../utils/helper.dart';
 import '../home/home_controller.dart';
-import '../../../ui/screens/Library/library_controller.dart';
+import '../library/library_artists_controller.dart';
 import '../settings/settings_controller.dart';
 
 /// ArtistController - Clean Architecture Implementation

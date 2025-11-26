@@ -16,7 +16,7 @@ import '../../../models/playlist.dart';
 import '../../../services/piped_service.dart';
 import '../../../services/activity_service.dart';
 import '../home/home_controller.dart';
-import '../../../ui/screens/Library/library_controller.dart';
+import '../library/library_playlists_controller.dart';
 import '../../../domain/playlist/entities/playlist_entity.dart';
 import '../../../domain/playlist/entities/track_entity.dart';
 import '../../../domain/playlist/usecases/save_playlist_usecase.dart';

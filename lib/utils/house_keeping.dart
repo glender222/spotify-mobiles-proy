@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:get/get.dart';
 import '/models/media_Item_builder.dart';
-import '/ui/screens/Library/library_controller.dart';
+import '../presentation/controllers/library/library_songs_controller.dart';
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
 import '../services/utils.dart';

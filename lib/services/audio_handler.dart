@@ -4,7 +4,6 @@ import 'dart:math';
 
 import 'package:flutter/services.dart';
 
-
 import 'package:hive/hive.dart';
 import 'package:get/get.dart';
 import 'package:just_audio/just_audio.dart';
@@ -27,7 +26,8 @@ import '../utils/helper.dart';
 import '/models/media_Item_builder.dart';
 import '/services/utils.dart';
 import '../presentation/controllers/settings/settings_controller.dart';
-import '../ui/screens/Library/library_controller.dart';
+import '../presentation/controllers/library/library_songs_controller.dart';
+import '../presentation/controllers/library/library_playlists_controller.dart';
 // ignore: unused_import, implementation_imports, depend_on_referenced_packages
 import "package:media_kit/src/player/platform_player.dart" show MPVLogLevel;
 
@@ -444,7 +444,6 @@ class MyAudioHandler extends BaseAudioHandler with GetxServiceMixin {
   @override
   Future<void> customAction(String name, [Map<String, dynamic>? extras]) async {
     switch (name) {
-
       case 'dispose':
         await _player.dispose();
         super.stop();
@@ -826,8 +825,8 @@ class MyAudioHandler extends BaseAudioHandler with GetxServiceMixin {
           highQualityAudio: audio,
           lowQualityAudio: audio);
 
-      if (path.contains(
-          "${Get.find<SettingsController>().supportDirPath}/Music")) {
+      if (path
+          .contains("${Get.find<SettingsController>().supportDirPath}/Music")) {
         return streamInfo;
       }
       //check file access and if file exist in storage
@@ -868,7 +867,6 @@ class MyAudioHandler extends BaseAudioHandler with GetxServiceMixin {
 class UrlError extends Error {
   String message() => 'Unable to fetch url';
 }
-
 
 // for Android Auto
 class MediaLibrary {

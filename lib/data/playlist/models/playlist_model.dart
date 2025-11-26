@@ -1,3 +1,4 @@
+// ignore_for_file: overridden_fields
 import 'package:hive/hive.dart';
 import 'package:harmonymusic/data/playlist/models/track_model.dart';
 import 'package:harmonymusic/domain/playlist/entities/playlist_entity.dart';
@@ -51,7 +52,8 @@ class PlaylistModel extends PlaylistEntity {
     );
   }
 
-  factory PlaylistModel.fromLegacyPlaylist(legacy.Playlist legacyPlaylist, {List<TrackModel>? tracks}) {
+  factory PlaylistModel.fromLegacyPlaylist(legacy.Playlist legacyPlaylist,
+      {List<TrackModel>? tracks}) {
     return PlaylistModel(
       id: legacyPlaylist.playlistId,
       title: legacyPlaylist.title,

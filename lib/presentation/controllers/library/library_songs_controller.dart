@@ -45,7 +45,7 @@ class LibrarySongsController extends GetxController {
 
       isSongFetched.value = true;
     } catch (e) {
-      print('Failed to load library songs: $e');
+      printERROR('Failed to load library songs: $e');
       isSongFetched.value = true; // Still mark as fetched to avoid loading loop
     }
   }
@@ -96,7 +96,7 @@ class LibrarySongsController extends GetxController {
       // Remove from repository (this will also delete file if needed)
       await _removeSongFromLibraryUseCase(item.id, deleteFile: true);
     } catch (e) {
-      print('Failed to remove song: $e');
+      printERROR('Failed to remove song: $e');
       // Re-add to UI if failed
       librarySongsList.add(item);
     }
@@ -148,7 +148,7 @@ class LibrarySongsController extends GetxController {
       // Show add to playlist dialog
       // Import needed: import '../../widgets/add_to_playlist.dart';
       // This will be handled by UI layer
-      print('Add to playlist operation - handled by UI');
+      printINFO('Add to playlist operation - handled by UI');
     }
   }
 

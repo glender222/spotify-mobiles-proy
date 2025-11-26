@@ -24,6 +24,7 @@ import '/presentation/controllers/library/library_songs_controller.dart';
 import '/presentation/controllers/library/library_playlists_controller.dart';
 import '/presentation/controllers/library/library_albums_controller.dart';
 import '/presentation/controllers/library/library_artists_controller.dart';
+import '/presentation/controllers/library/combined_library_controller.dart';
 
 /// Binding for Library Module
 /// Registers all dependencies for Clean Architecture
@@ -87,10 +88,12 @@ class LibraryBinding extends Bindings {
       ),
     );
 
-    Get.lazyPut(
+    Get.lazyPut<LibraryArtistsController>(
       () => LibraryArtistsController(
         getLibraryArtistsUseCase: Get.find<GetLibraryArtistsUseCase>(),
       ),
     );
+
+    Get.lazyPut<CombinedLibraryController>(() => CombinedLibraryController());
   }
 }

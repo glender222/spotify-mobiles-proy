@@ -14,7 +14,7 @@ import '../../../models/album.dart'; // Legacy model for compatibility
 import '../../../models/playlist.dart';
 import '../../../utils/helper.dart';
 import '../home/home_controller.dart';
-import '../../../ui/screens/Library/library_controller.dart';
+import '../library/library_albums_controller.dart';
 
 /// AlbumController - Hybrid Clean Architecture Approach
 ///

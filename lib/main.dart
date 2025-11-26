@@ -20,7 +20,10 @@ import '/ui/utils/theme_controller.dart';
 import 'presentation/controllers/home/home_controller.dart';
 import '/presentation/controllers/search/search_controller.dart'
     as app_controllers;
-import 'ui/screens/Library/library_controller.dart';
+import 'presentation/controllers/library/library_songs_controller.dart';
+import 'presentation/controllers/library/library_playlists_controller.dart';
+import 'presentation/controllers/library/library_albums_controller.dart';
+import 'presentation/controllers/library/library_artists_controller.dart';
 import 'utils/system_tray.dart';
 import 'utils/update_check_flag_file.dart';
 import 'domain/settings/usecases/get_app_language_usecase.dart';
@@ -117,6 +120,21 @@ import 'domain/album/usecases/add_album_to_library_usecase.dart';
 import 'domain/album/usecases/remove_album_from_library_usecase.dart';
 import 'domain/album/usecases/is_album_in_library_usecase.dart';
 
+// Library module imports
+import 'domain/library/repository/library_repository.dart';
+import 'data/library/repository/library_repository_impl.dart';
+import 'data/library/datasources/library_local_datasource.dart';
+import 'data/library/datasources/library_local_datasource_impl.dart';
+import 'domain/library/usecases/get_library_songs_usecase.dart';
+import 'domain/library/usecases/add_song_to_library_usecase.dart';
+import 'domain/library/usecases/remove_song_from_library_usecase.dart';
+import 'domain/library/usecases/get_library_playlists_usecase.dart';
+import 'domain/library/usecases/create_playlist_usecase.dart';
+import 'domain/library/usecases/rename_playlist_usecase.dart';
+import 'domain/library/usecases/sync_piped_playlists_usecase.dart';
+import 'domain/library/usecases/get_library_albums_usecase.dart';
+import 'domain/library/usecases/get_library_artists_usecase.dart';
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initHive();
@@ -204,10 +222,31 @@ Future<void> startApplicationServices() async {
   Get.lazyPut(() => ThemeController(), fenix: true);
   Get.lazyPut(() => PlayerController(), fenix: true);
   Get.lazyPut(() => HomeController(), fenix: true);
-  Get.lazyPut(() => LibrarySongsController(), fenix: true);
-  Get.lazyPut(() => LibraryPlaylistsController(), fenix: true);
-  Get.lazyPut(() => LibraryAlbumsController(), fenix: true);
-  Get.lazyPut(() => LibraryArtistsController(), fenix: true);
+  Get.lazyPut(
+      () => LibrarySongsController(
+            getLibrarySongsUseCase: Get.find<GetLibrarySongsUseCase>(),
+            removeSongFromLibraryUseCase:
+                Get.find<RemoveSongFromLibraryUseCase>(),
+          ),
+      fenix: true);
+  Get.lazyPut(
+      () => LibraryPlaylistsController(
+            getLibraryPlaylistsUseCase: Get.find<GetLibraryPlaylistsUseCase>(),
+            createPlaylistUseCase: Get.find<CreatePlaylistUseCase>(),
+            renamePlaylistUseCase: Get.find<RenamePlaylistUseCase>(),
+            syncPipedPlaylistsUseCase: Get.find<SyncPipedPlaylistsUseCase>(),
+          ),
+      fenix: true);
+  Get.lazyPut(
+      () => LibraryAlbumsController(
+            getLibraryAlbumsUseCase: Get.find<GetLibraryAlbumsUseCase>(),
+          ),
+      fenix: true);
+  Get.lazyPut(
+      () => LibraryArtistsController(
+            getLibraryArtistsUseCase: Get.find<GetLibraryArtistsUseCase>(),
+          ),
+      fenix: true);
 
   // Settings UseCases
   Get.lazyPut(() => GetAppLanguageUseCase(), fenix: true);
@@ -317,6 +356,35 @@ Future<void> startApplicationServices() async {
   Get.lazyPut(() => IsAlbumInLibraryUseCase(Get.find<AlbumRepository>()),
       fenix: true);
 
+  // Library Module - Data Sources
+  Get.lazyPut<LibraryLocalDataSource>(
+      () => LibraryLocalDataSourceImpl(
+            songsDownloadBox: Hive.box('SongDownloads'),
+            songsCacheBox: Hive.box('SongsCache'),
+            playlistsBox: Hive.box('userPlaylists'),
+            albumsBox: Hive.box('userAlbums'),
+            artistsBox: Hive.box('userArtists'),
+          ),
+      fenix: true);
+
+  // Library Module - Repository
+  Get.lazyPut<LibraryRepository>(
+      () => LibraryRepositoryImpl(
+            localDataSource: Get.find<LibraryLocalDataSource>(),
+          ),
+      fenix: true);
+
+  // Library Module - UseCases
+  Get.lazyPut(() => GetLibrarySongsUseCase(), fenix: true);
+  Get.lazyPut(() => AddSongToLibraryUseCase(), fenix: true);
+  Get.lazyPut(() => RemoveSongFromLibraryUseCase(), fenix: true);
+  Get.lazyPut(() => GetLibraryPlaylistsUseCase(), fenix: true);
+  Get.lazyPut(() => CreatePlaylistUseCase(), fenix: true);
+  Get.lazyPut(() => RenamePlaylistUseCase(), fenix: true);
+  Get.lazyPut(() => SyncPipedPlaylistsUseCase(), fenix: true);
+  Get.lazyPut(() => GetLibraryAlbumsUseCase(), fenix: true);
+  Get.lazyPut(() => GetLibraryArtistsUseCase(), fenix: true);
+
   // Settings Controller (depends on UseCases)
   Get.lazyPut(() => SettingsController(), fenix: true);
 
@@ -344,6 +412,7 @@ initHive() async {
   await Hive.openBox('userHistory');
   await Hive.openBox('userPlaylists');
   await Hive.openBox('userArtists');
+  await Hive.openBox('userAlbums');
 }
 
 void _setAppInitPrefs() {

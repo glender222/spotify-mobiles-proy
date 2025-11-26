@@ -16,7 +16,7 @@ import '../../../services/downloader.dart';
 import '../../../services/music_service.dart';
 import '../../../services/permission_service.dart';
 import '../../../services/stream_service.dart';
-import '../../../ui/screens/Library/library_controller.dart';
+import '../../../presentation/controllers/library/library_songs_controller.dart';
 import '../../../ui/widgets/snackbar.dart';
 import '../../../utils/helper.dart';
 import '../../../models/media_Item_builder.dart';
@@ -25,7 +25,6 @@ class DownloadRepositoryImpl implements DownloadRepository {
   final Downloader _downloader = Get.find<Downloader>();
   final SettingsRepository _settingsRepository = Get.find<SettingsRepository>();
   final _dio = Dio();
-  MediaItem? _currentSong;
 
   @override
   Stream<int> get songDownloadingProgress =>
@@ -119,7 +118,6 @@ class DownloadRepositoryImpl implements DownloadRepository {
       _triggerDownloadingJob();
     } else {
       _downloader.isJobRunning.value = false;
-      _currentSong = null;
     }
   }
 
@@ -135,7 +133,6 @@ class DownloadRepositoryImpl implements DownloadRepository {
       }
 
       if (!Hive.box("SongDownloads").containsKey(song.id)) {
-        _currentSong = song;
         _downloader.songDownloadingProgress.value = 0;
         await _writeFileStream(song);
       }

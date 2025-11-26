@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import '../../utils/helper.dart';
 import '/services/piped_service.dart';
 import '../../presentation/controllers/settings/settings_controller.dart';
-import '../screens/Library/library_controller.dart';
+import '../../presentation/controllers/library/library_playlists_controller.dart';
 import 'common_dialog_widget.dart';
 import 'modified_text_field.dart';
 import 'snackbar.dart';

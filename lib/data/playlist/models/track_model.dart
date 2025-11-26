@@ -1,3 +1,4 @@
+// ignore_for_file: overridden_fields
 import 'package:audio_service/audio_service.dart' show MediaItem;
 import 'package:hive/hive.dart';
 import 'package:harmonymusic/domain/playlist/entities/track_entity.dart';
