@@ -13,7 +13,7 @@ import '../../../presentation/controllers/library/library_playlists_controller.d
 import '../../widgets/snackbar.dart';
 import '/ui/widgets/link_piped.dart';
 import '/services/music_service.dart';
-import '/ui/player/player_controller.dart';
+import '/presentation/controllers/player/player_controller.dart';
 import '/ui/utils/theme_controller.dart';
 import 'components/custom_expansion_tile.dart';
 import '../../../presentation/controllers/settings/settings_controller.dart';
@@ -444,7 +444,7 @@ class SettingsScreen extends StatelessWidget {
                           style: Theme.of(context).textTheme.bodyMedium),
                       onTap: () async {
                         try {
-                          await Get.find<PlayerController>().openEqualizer();
+                          Get.find<PlayerController>().openEqualizer();
                         } catch (e) {
                           printERROR(e);
                         }

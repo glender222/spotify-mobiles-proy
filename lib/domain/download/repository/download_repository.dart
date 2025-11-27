@@ -9,4 +9,5 @@ abstract class DownloadRepository {
   Stream<bool> get isJobRunning;
   Stream<String> get currentPlaylistId;
   Stream<List<MediaItem>> get songQueue;
+  Stream<String> get completedPlaylistId;
 }

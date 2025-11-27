@@ -10,7 +10,7 @@ import 'package:widget_marquee/widget_marquee.dart';
 
 import '../../widgets/songinfo_bottom_sheet.dart';
 import '../../utils/theme_controller.dart';
-import '../player_controller.dart';
+import '/presentation/controllers/player/player_controller.dart';
 
 class GesturePlayer extends StatelessWidget {
   const GesturePlayer({super.key});
@@ -53,18 +53,26 @@ class GesturePlayer extends StatelessWidget {
           child: Align(
             child: Center(
               child: Obx(
-                () => FadeTransition(
-                  opacity: playerController.gesturePlayerStateAnimation!,
-                  child: playerController.gesturePlayerVisibleState.value == 2
-                      ? const SizedBox.shrink()
-                      : Icon(
-                          playerController.gesturePlayerVisibleState.value == 1
-                              ? Icons.play_arrow
-                              : Icons.pause,
-                          size: 180,
-                          color: Colors.white,
-                        ),
-                ),
+                () {
+                  final animation =
+                      playerController.gesturePlayerStateAnimation;
+                  if (animation == null) {
+                    return const SizedBox.shrink();
+                  }
+                  return FadeTransition(
+                    opacity: animation,
+                    child: playerController.gesturePlayerVisibleState.value == 2
+                        ? const SizedBox.shrink()
+                        : Icon(
+                            playerController.gesturePlayerVisibleState.value ==
+                                    1
+                                ? Icons.play_arrow
+                                : Icons.pause,
+                            size: 180,
+                            color: Colors.white,
+                          ),
+                  );
+                },
               ),
             ),
           ),
@@ -187,7 +195,7 @@ class GesturePlayer extends StatelessWidget {
                                           icon: Icon(
                                             Icons.all_inclusive,
                                             color: playerController
-                                                    .isLoopModeEnabled.value
+                                                    .isLoopModeEnabled
                                                 ? Theme.of(context)
                                                     .textTheme
                                                     .titleLarge!

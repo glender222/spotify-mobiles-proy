@@ -5,7 +5,7 @@ import 'package:ionicons/ionicons.dart';
 import 'package:widget_marquee/widget_marquee.dart';
 
 import '/ui/player/components/animated_play_button.dart';
-import '../player_controller.dart';
+import '/presentation/controllers/player/player_controller.dart';
 
 class PlayerControlWidget extends StatelessWidget {
   const PlayerControlWidget({super.key});
@@ -128,14 +128,18 @@ class PlayerControlWidget extends StatelessWidget {
                                 .withOpacity(0.2),
                       ))),
               _previousButton(playerController, context),
-              const CircleAvatar(radius: 35, child: AnimatedPlayButton(key: Key("playButton"),)),
+              const CircleAvatar(
+                  radius: 35,
+                  child: AnimatedPlayButton(
+                    key: Key("playButton"),
+                  )),
               _nextButton(playerController, context),
               Obx(() {
                 return IconButton(
                     onPressed: playerController.toggleLoopMode,
                     icon: Icon(
                       Icons.all_inclusive,
-                      color: playerController.isLoopModeEnabled.value
+                      color: playerController.isLoopModeEnabled
                           ? Theme.of(context).textTheme.titleLarge!.color
                           : Theme.of(context)
                               .textTheme
@@ -148,7 +152,6 @@ class PlayerControlWidget extends StatelessWidget {
           ),
         ]);
   }
-
 
   Widget _previousButton(
       PlayerController playerController, BuildContext context) {
@@ -167,7 +170,7 @@ Widget _nextButton(PlayerController playerController, BuildContext context) {
   return Obx(() {
     final isLastSong = playerController.currentQueue.isEmpty ||
         (!(playerController.isShuffleModeEnabled.isTrue ||
-                playerController.isQueueLoopModeEnabled.isTrue) &&
+                playerController.isQueueLoopModeEnabled) &&
             (playerController.currentQueue.last.id ==
                 playerController.currentSong.value?.id));
     return IconButton(

@@ -25,6 +25,7 @@ import '../../../domain/playlist/usecases/get_online_playlist_details_usecase.da
 import '../../../domain/playlist/usecases/update_local_playlist_usecase.dart';
 import '../../../domain/playlist/usecases/export_playlist_usecase.dart';
 import '../../../domain/playlist/entities/export_type.dart';
+import '../../../domain/download/usecases/get_completed_playlist_id_usecase.dart';
 
 class PlaylistController extends PlaylistAlbumScreenControllerBase
     with AdditionalOpeartionMixin, GetSingleTickerProviderStateMixin {
@@ -39,6 +40,8 @@ class PlaylistController extends PlaylistAlbumScreenControllerBase
       Get.find<UpdateLocalPlaylistUseCase>();
   final ExportPlaylistUseCase _exportPlaylistUseCase =
       Get.find<ExportPlaylistUseCase>();
+  final GetCompletedPlaylistIdUseCase _getCompletedPlaylistIdUseCase =
+      Get.find<GetCompletedPlaylistIdUseCase>();
 
   final playlist = Playlist(
     title: "",
@@ -77,6 +80,13 @@ class PlaylistController extends PlaylistAlbumScreenControllerBase
     fetchPlaylistDetails(playlist, playlistId);
     Future.delayed(const Duration(milliseconds: 200),
         () => Get.find<HomeController>().whenHomeScreenOnTop());
+
+    // Listen for download completion
+    _getCompletedPlaylistIdUseCase().listen((id) {
+      if (id == this.playlist.value.playlistId) {
+        checkDownloadStatus();
+      }
+    });
   }
 
   @override
@@ -308,7 +318,9 @@ class PlaylistController extends PlaylistAlbumScreenControllerBase
           currentPlaylist.copyWith(thumbnailUrl: Playlist.thumbPlaceholderUrl);
     }
     if (Thumbnail(currentPlaylist.thumbnailUrl).extraHigh ==
-        Thumbnail(updatedplaylist.thumbnailUrl).extraHigh) return;
+        Thumbnail(updatedplaylist.thumbnailUrl).extraHigh) {
+      return;
+    }
     playlist.value = updatedplaylist;
     Get.find<LibraryPlaylistsController>()
         .updatePlaylistIntoDb(updatedplaylist);

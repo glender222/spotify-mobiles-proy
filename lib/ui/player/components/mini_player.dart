@@ -7,7 +7,7 @@ import 'package:widget_marquee/widget_marquee.dart';
 
 import '/ui/widgets/lyrics_dialog.dart';
 import '/ui/widgets/song_info_dialog.dart';
-import '/ui/player/player_controller.dart';
+import '/presentation/controllers/player/player_controller.dart';
 import '../../widgets/add_to_playlist.dart';
 import '../../widgets/sleep_timer_bottom_sheet.dart';
 import '../../widgets/song_download_btn.dart';
@@ -23,7 +23,8 @@ class MiniPlayer extends StatelessWidget {
     final playerController = Get.find<PlayerController>();
     final size = MediaQuery.of(context).size;
     final isWideScreen = size.width > 800;
-    final bottomNavEnabled = Get.find<SettingsController>().isBottomNavBarEnabled.isTrue;
+    final bottomNavEnabled =
+        Get.find<SettingsController>().isBottomNavBarEnabled.isTrue;
     return Obx(() {
       return Visibility(
         visible: playerController.isPlayerpanelTopVisible.value,
@@ -250,18 +251,16 @@ class MiniPlayer extends StatelessWidget {
                               SizedBox(
                                   width: 40,
                                   child: Obx(() {
-                                    final isLastSong =
-                                        playerController.currentQueue.isEmpty ||
-                                            (!(playerController
-                                                        .isShuffleModeEnabled
-                                                        .isTrue ||
-                                                    playerController
-                                                        .isQueueLoopModeEnabled
-                                                        .isTrue) &&
-                                                (playerController
-                                                        .currentQueue.last.id ==
-                                                    playerController.currentSong
-                                                        .value?.id));
+                                    final isLastSong = playerController
+                                            .currentQueue.isEmpty ||
+                                        (!(playerController.isShuffleModeEnabled
+                                                    .isTrue ||
+                                                playerController
+                                                    .isQueueLoopModeEnabled) &&
+                                            (playerController
+                                                    .currentQueue.last.id ==
+                                                playerController
+                                                    .currentSong.value?.id));
                                     return InkWell(
                                       onTap: isLastSong
                                           ? null
@@ -291,17 +290,17 @@ class MiniPlayer extends StatelessWidget {
                                             playerController.toggleLoopMode,
                                         icon: Icon(
                                           Icons.all_inclusive,
-                                          color: playerController
-                                                  .isLoopModeEnabled.value
-                                              ? Theme.of(context)
-                                                  .textTheme
-                                                  .titleLarge!
-                                                  .color
-                                              : Theme.of(context)
-                                                  .textTheme
-                                                  .titleLarge!
-                                                  .color!
-                                                  .withOpacity(0.2),
+                                          color:
+                                              playerController.isLoopModeEnabled
+                                                  ? Theme.of(context)
+                                                      .textTheme
+                                                      .titleLarge!
+                                                      .color
+                                                  : Theme.of(context)
+                                                      .textTheme
+                                                      .titleLarge!
+                                                      .color!
+                                                      .withOpacity(0.2),
                                         )),
                                     IconButton(
                                         iconSize: 20,
@@ -313,13 +312,14 @@ class MiniPlayer extends StatelessWidget {
                                                   context: context)
                                               .whenComplete(() {
                                             playerController
-                                                    .isDesktopLyricsDialogOpen =
-                                                false;
+                                                .isDesktopLyricsDialogOpen
+                                                .value = false;
                                             playerController
                                                 .showLyricsflag.value = false;
                                           });
                                           playerController
-                                              .isDesktopLyricsDialogOpen = true;
+                                              .isDesktopLyricsDialogOpen
+                                              .value = true;
                                         },
                                         icon: Icon(Icons.lyrics_outlined,
                                             color: Theme.of(context)
@@ -350,14 +350,14 @@ class MiniPlayer extends StatelessWidget {
                                     height: 20,
                                     width: (size.width > 860) ? 220 : 180,
                                     child: Obx(() {
-                                      final volume =
-                                          playerController.volume.value;
+                                      final volume = playerController.volume;
                                       return Row(
                                         children: [
                                           SizedBox(
                                               width: 20,
                                               child: InkWell(
-                                                onTap: playerController.mute,
+                                                onTap:
+                                                    playerController.toggleMute,
                                                 child: Icon(
                                                   volume == 0
                                                       ? Icons.volume_off
@@ -382,12 +382,11 @@ class MiniPlayer extends StatelessWidget {
                                                         overlayRadius: 10.0),
                                               ),
                                               child: Slider(
-                                                value: playerController
-                                                        .volume.value /
+                                                value: playerController.volume /
                                                     100,
                                                 onChanged: (value) {
-                                                  playerController.setVolume(
-                                                      (value * 100).toInt());
+                                                  playerController
+                                                      .setVolume(value * 100);
                                                 },
                                               ),
                                             ),

@@ -11,7 +11,7 @@ import 'package:widget_marquee/widget_marquee.dart';
 import '../../../domain/download/usecases/download_playlist_usecase.dart';
 import '../../../domain/download/usecases/get_playlist_downloading_progress_usecase.dart';
 import '../../../domain/download/usecases/get_current_playlist_id_usecase.dart';
-import '../../player/player_controller.dart';
+import '/presentation/controllers/player/player_controller.dart';
 import '../../widgets/loader.dart';
 import '../../widgets/snackbar.dart';
 import '../../widgets/song_list_tile.dart';
@@ -20,12 +20,13 @@ import '../../widgets/sort_widget.dart';
 import '../../../presentation/controllers/album/album_controller.dart';
 
 class AlbumScreen extends StatelessWidget {
-  const AlbumScreen({super.key});
+  const AlbumScreen({super.key, this.tag});
+  final String? tag;
 
   @override
   Widget build(BuildContext context) {
-    final tag = key.hashCode.toString();
-    final albumController = Get.find<AlbumController>();
+    final effectiveTag = tag ?? key.hashCode.toString();
+    final albumController = Get.find<AlbumController>(tag: effectiveTag);
     final size = MediaQuery.of(context).size;
     final playerController = Get.find<PlayerController>();
     final landscape = size.width > size.height;

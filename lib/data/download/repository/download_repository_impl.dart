@@ -38,6 +38,9 @@ class DownloadRepositoryImpl implements DownloadRepository {
   Stream<String> get currentPlaylistId => _downloader.currentPlaylistId.stream;
   @override
   Stream<List<MediaItem>> get songQueue => _downloader.songQueue.stream;
+  @override
+  Stream<String> get completedPlaylistId =>
+      _downloader.completedPlaylistId.stream;
 
   @override
   Future<void> downloadPlaylist(
@@ -105,6 +108,14 @@ class DownloadRepositoryImpl implements DownloadRepository {
               (_downloader.playlistQueue[playlistId]!).toList(),
               isPlaylist: true);
           _downloader.playlistQueue.remove(playlistId);
+          // Notify completion
+          _downloader.completedPlaylistId.value = playlistId;
+          // Reset after a short delay so it can be triggered again if needed
+          Future.delayed(const Duration(milliseconds: 100), () {
+            if (_downloader.completedPlaylistId.value == playlistId) {
+              _downloader.completedPlaylistId.value = "";
+            }
+          });
         }
         _downloader.currentPlaylistId.value = "";
         _downloader.playlistDownloadingProgress.value = 0;
@@ -196,6 +207,7 @@ class DownloadRepositoryImpl implements DownloadRepository {
           final supportDir = (await getApplicationSupportDirectory()).path;
           final thumbnailPath = "$supportDir/thumbnails/${song.id}.png";
           await _dio.downloadUri(song.artUri!, thumbnailPath);
+          // ignore: empty_catches
         } catch (e) {}
         song.extras?['url'] = filePath;
         final songJson = MediaItemBuilder.toJson(song);

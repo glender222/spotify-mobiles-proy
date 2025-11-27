@@ -17,6 +17,9 @@ import '../controllers/artist/artist_controller.dart';
 /// Binding for Artist module
 /// Handles dependency injection for Artist screen
 class ArtistBinding extends Bindings {
+  final String? tag;
+  ArtistBinding({this.tag});
+
   @override
   void dependencies() {
     // Data Sources
@@ -80,6 +83,7 @@ class ArtistBinding extends Bindings {
         removeFromLibrary: Get.find<RemoveArtistFromLibraryUseCase>(),
         isInLibrary: Get.find<IsArtistInLibraryUseCase>(),
       ),
+      tag: tag,
       fenix: true,
     );
   }

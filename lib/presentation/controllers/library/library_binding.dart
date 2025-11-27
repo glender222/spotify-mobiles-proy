@@ -6,6 +6,7 @@ import '/domain/library/repository/library_repository.dart';
 
 // Use Cases
 import '/domain/library/usecases/get_library_songs_usecase.dart';
+import '/domain/library/usecases/watch_library_songs_usecase.dart';
 import '/domain/library/usecases/remove_song_from_library_usecase.dart';
 import '/domain/library/usecases/get_library_playlists_usecase.dart';
 import '/domain/library/usecases/create_playlist_usecase.dart';
@@ -24,7 +25,6 @@ import '/presentation/controllers/library/library_songs_controller.dart';
 import '/presentation/controllers/library/library_playlists_controller.dart';
 import '/presentation/controllers/library/library_albums_controller.dart';
 import '/presentation/controllers/library/library_artists_controller.dart';
-import '/presentation/controllers/library/combined_library_controller.dart';
 
 /// Binding for Library Module
 /// Registers all dependencies for Clean Architecture
@@ -36,6 +36,7 @@ class LibraryBinding extends Bindings {
       () => LibraryLocalDataSourceImpl(
         songsDownloadBox: Hive.box('SongDownloads'),
         songsCacheBox: Hive.box('SongsCache'),
+        favoritesBox: Hive.box('LIBFAV'),
         playlistsBox: Hive.box('LibraryPlaylists'),
         albumsBox: Hive.box('LibraryAlbums'),
         artistsBox: Hive.box('LibraryArtists'),
@@ -51,6 +52,7 @@ class LibraryBinding extends Bindings {
 
     // Use Cases - Songs
     Get.lazyPut(() => GetLibrarySongsUseCase());
+    Get.lazyPut(() => WatchLibrarySongsUseCase(Get.find<LibraryRepository>()));
     Get.lazyPut(() => RemoveSongFromLibraryUseCase());
 
     // Use Cases - Playlists
@@ -69,6 +71,7 @@ class LibraryBinding extends Bindings {
     Get.lazyPut(
       () => LibrarySongsController(
         getLibrarySongsUseCase: Get.find<GetLibrarySongsUseCase>(),
+        watchLibrarySongsUseCase: Get.find<WatchLibrarySongsUseCase>(),
         removeSongFromLibraryUseCase: Get.find<RemoveSongFromLibraryUseCase>(),
       ),
     );
@@ -93,7 +96,5 @@ class LibraryBinding extends Bindings {
         getLibraryArtistsUseCase: Get.find<GetLibraryArtistsUseCase>(),
       ),
     );
-
-    Get.lazyPut<CombinedLibraryController>(() => CombinedLibraryController());
   }
 }

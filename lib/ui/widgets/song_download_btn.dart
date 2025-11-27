@@ -8,7 +8,7 @@ import '../../domain/download/usecases/get_current_song_usecase.dart';
 import '../../domain/download/usecases/get_song_downloading_progress_usecase.dart';
 import '../../domain/download/usecases/get_song_queue_usecase.dart';
 import '../../domain/download/usecases/is_job_running_usecase.dart';
-import '../player/player_controller.dart';
+import '/presentation/controllers/player/player_controller.dart';
 import 'loader.dart';
 import 'snackbar.dart';
 
@@ -29,7 +29,8 @@ class SongDownloadButton extends StatelessWidget {
     final downloadSongUseCase = Get.find<DownloadSongUseCase>();
     final getSongQueueUseCase = Get.find<GetSongQueueUseCase>();
     final getCurrentSongUseCase = Get.find<GetCurrentSongUseCase>();
-    final getSongDownloadingProgressUseCase = Get.find<GetSongDownloadingProgressUseCase>();
+    final getSongDownloadingProgressUseCase =
+        Get.find<GetSongDownloadingProgressUseCase>();
     final isJobRunningUseCase = Get.find<IsJobRunningUseCase>();
     final playerController = Get.find<PlayerController>();
 
@@ -61,14 +62,17 @@ class SongDownloadButton extends StatelessWidget {
                       isDownloadingDoneCallback!(isDownloadingDone);
                     }
 
-                    if (isDownloadingDone || Hive.box("SongDownloads").containsKey(song.id)) {
+                    if (isDownloadingDone ||
+                        Hive.box("SongDownloads").containsKey(song.id)) {
                       return Icon(
                         Icons.download_done,
                         color: Theme.of(context).textTheme.titleMedium!.color,
                       );
                     }
 
-                    if (songQueue.contains(song) && isJobRunning && currentSong == song) {
+                    if (songQueue.contains(song) &&
+                        isJobRunning &&
+                        currentSong == song) {
                       return Stack(
                         alignment: Alignment.center,
                         children: [
@@ -79,7 +83,9 @@ class SongDownloadButton extends StatelessWidget {
                               style: Theme.of(context)
                                   .textTheme
                                   .titleMedium!
-                                  .copyWith(fontSize: 10, fontWeight: FontWeight.bold),
+                                  .copyWith(
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.bold),
                             ),
                           ),
                           LoadingIndicator(
@@ -105,9 +111,9 @@ class SongDownloadButton extends StatelessWidget {
                           if (box.containsKey(song.id)) {
                             if (!context.mounted) return;
                             Navigator.of(context).pop();
-                            ScaffoldMessenger.of(context).showSnackBar(
-                                snackbar(context, "songAlreadyOfflineAlert".tr,
-                                    size: SanckBarSize.BIG));
+                            ScaffoldMessenger.of(context).showSnackBar(snackbar(
+                                context, "songAlreadyOfflineAlert".tr,
+                                size: SanckBarSize.BIG));
                           } else {
                             downloadSongUseCase(song);
                           }

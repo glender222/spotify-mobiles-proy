@@ -2,6 +2,7 @@ import 'package:audio_service/audio_service.dart';
 import 'package:get/get.dart';
 import '../../../domain/library/usecases/get_library_songs_usecase.dart';
 import '../../../domain/library/usecases/remove_song_from_library_usecase.dart';
+import '../../../domain/library/usecases/watch_library_songs_usecase.dart';
 import '/ui/widgets/sort_widget.dart';
 import '/utils/helper.dart';
 
@@ -10,12 +11,15 @@ class LibrarySongsController extends GetxController {
   // Use Cases injection
   final GetLibrarySongsUseCase _getLibrarySongsUseCase;
   final RemoveSongFromLibraryUseCase _removeSongFromLibraryUseCase;
+  final WatchLibrarySongsUseCase _watchLibrarySongsUseCase;
 
   LibrarySongsController({
     required GetLibrarySongsUseCase getLibrarySongsUseCase,
     required RemoveSongFromLibraryUseCase removeSongFromLibraryUseCase,
+    required WatchLibrarySongsUseCase watchLibrarySongsUseCase,
   })  : _getLibrarySongsUseCase = getLibrarySongsUseCase,
-        _removeSongFromLibraryUseCase = removeSongFromLibraryUseCase;
+        _removeSongFromLibraryUseCase = removeSongFromLibraryUseCase,
+        _watchLibrarySongsUseCase = watchLibrarySongsUseCase;
 
   // State
   late RxList<MediaItem> librarySongsList = RxList();
@@ -30,8 +34,17 @@ class LibrarySongsController extends GetxController {
 
   @override
   void onInit() {
-    init();
+    // init(); // Stream handles initialization
+    _watchLibrary();
     super.onInit();
+  }
+
+  void _watchLibrary() {
+    _watchLibrarySongsUseCase().listen((songs) {
+      librarySongsList.value =
+          songs.map((entity) => entity.toMediaItem()).toList();
+      isSongFetched.value = true;
+    });
   }
 
   Future<void> init() async {

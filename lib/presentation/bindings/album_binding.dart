@@ -13,9 +13,14 @@ import '../../data/album/datasources/album_local_data_source.dart';
 import '../../services/music_service.dart';
 import '../controllers/album/album_controller.dart';
 
+import '../../domain/download/usecases/get_completed_playlist_id_usecase.dart';
+
 /// Binding for Album module
 /// Handles dependency injection for Album screen
 class AlbumBinding extends Bindings {
+  final String? tag;
+  AlbumBinding({this.tag});
+
   @override
   void dependencies() {
     // Data Sources
@@ -72,7 +77,10 @@ class AlbumBinding extends Bindings {
         addToLibrary: Get.find<AddAlbumToLibraryUseCase>(),
         removeFromLibrary: Get.find<RemoveAlbumFromLibraryUseCase>(),
         isInLibrary: Get.find<IsAlbumInLibraryUseCase>(),
+        getCompletedPlaylistIdUseCase:
+            Get.find<GetCompletedPlaylistIdUseCase>(),
       ),
+      tag: tag,
       fenix: true,
     );
   }

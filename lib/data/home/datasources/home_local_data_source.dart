@@ -37,7 +37,10 @@ class HomeLocalDataSourceImpl implements HomeLocalDataSource {
     if (contentData == null) {
       return [];
     }
-    return contentData.map((json) => HomeSectionModel.fromJson(json as Map<String, dynamic>)).toList();
+    return contentData
+        .map((json) =>
+            HomeSectionModel.fromJson(Map<String, dynamic>.from(json)))
+        .toList();
   }
 
   @override

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '/models/quick_picks.dart';
-import '../player/player_controller.dart';
+import '/presentation/controllers/player/player_controller.dart';
 import 'image_widget.dart';
 import 'songinfo_bottom_sheet.dart';
 

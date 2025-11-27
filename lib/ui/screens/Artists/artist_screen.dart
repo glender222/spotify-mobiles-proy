@@ -6,7 +6,7 @@ import '/presentation/controllers/settings/settings_controller.dart';
 import '../../widgets/animated_screen_transition.dart';
 import '../../widgets/loader.dart';
 import '../../widgets/separate_tab_item_widget.dart';
-import '/ui/player/player_controller.dart';
+import '/presentation/controllers/player/player_controller.dart';
 import '/ui/widgets/image_widget.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../navigator.dart';
@@ -14,15 +14,16 @@ import '../../widgets/snackbar.dart';
 import '../../../presentation/controllers/artist/artist_controller.dart';
 
 class ArtistScreen extends StatelessWidget {
-  const ArtistScreen({super.key});
+  const ArtistScreen({super.key, this.tag});
+  final String? tag;
 
   @override
   Widget build(BuildContext context) {
     final playerController = Get.find<PlayerController>();
-    final tag = key.hashCode.toString();
+    final effectiveTag = tag ?? key.hashCode.toString();
     // Controller is created by ArtistBinding
     final ArtistController artistController =
-        Get.find<ArtistController>(tag: tag);
+        Get.find<ArtistController>(tag: effectiveTag);
     return Scaffold(
       floatingActionButton: Obx(
         () => Padding(
@@ -55,7 +56,8 @@ class ArtistScreen extends StatelessWidget {
       ),
       body: GetPlatform.isDesktop ||
               Get.find<SettingsController>().isBottomNavBarEnabled.value
-          ? ArtistScreenBN(artistController: artistController, tag: tag)
+          ? ArtistScreenBN(
+              artistController: artistController, tag: effectiveTag)
           : Row(
               children: [
                 Align(
@@ -117,7 +119,7 @@ class ArtistScreen extends StatelessWidget {
                       child: Center(
                         key: ValueKey<int>(
                             artistController.navigationRailCurrentIndex.value),
-                        child: Body(tag: tag),
+                        child: Body(tag: effectiveTag),
                       ),
                     ),
                   ),

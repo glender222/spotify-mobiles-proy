@@ -3,7 +3,7 @@ import 'package:flutter_lyric/lyrics_reader.dart';
 import 'package:get/get.dart';
 
 import '../../widgets/loader.dart';
-import '../player_controller.dart';
+import '/presentation/controllers/player/player_controller.dart';
 
 class LyricsWidget extends StatelessWidget {
   final EdgeInsetsGeometry padding;
@@ -28,14 +28,16 @@ class LyricsWidget extends StatelessWidget {
                         child: SelectableText(
                           playerController.lyrics["plainLyrics"] == "NA"
                               ? "lyricsNotAvailable".tr
-                              : playerController.lyrics["plainLyrics"],
+                              : playerController.lyrics["plainLyrics"]
+                                  .toString(),
                           textAlign: TextAlign.center,
-                          style: playerController.isDesktopLyricsDialogOpen
-                              ? Theme.of(context).textTheme.titleMedium!
-                              : Theme.of(context)
-                                  .textTheme
-                                  .titleMedium!
-                                  .copyWith(color: Colors.white),
+                          style:
+                              playerController.isDesktopLyricsDialogOpen.value
+                                  ? Theme.of(context).textTheme.titleMedium!
+                                  : Theme.of(context)
+                                      .textTheme
+                                      .titleMedium!
+                                      .copyWith(color: Colors.white),
                         ),
                       ),
                     ),
@@ -44,7 +46,7 @@ class LyricsWidget extends StatelessWidget {
               : IgnorePointer(
                   child: LyricsReader(
                     padding: const EdgeInsets.only(left: 5, right: 5),
-                    lyricUi: playerController.lyricUi,
+                    lyricUi: playerController.lyricUi.value,
                     position: playerController
                         .progressBarStatus.value.current.inMilliseconds,
                     model: LyricsModelBuilder.create()
@@ -54,12 +56,12 @@ class LyricsWidget extends StatelessWidget {
                     emptyBuilder: () => Center(
                       child: Text(
                         "syncedLyricsNotAvailable".tr,
-                        style: playerController.isDesktopLyricsDialogOpen
-                              ? Theme.of(context).textTheme.titleMedium!
-                              : Theme.of(context)
-                                  .textTheme
-                                  .titleMedium!
-                                  .copyWith(color: Colors.white),
+                        style: playerController.isDesktopLyricsDialogOpen.value
+                            ? Theme.of(context).textTheme.titleMedium!
+                            : Theme.of(context)
+                                .textTheme
+                                .titleMedium!
+                                .copyWith(color: Colors.white),
                       ),
                     ),
                   ),

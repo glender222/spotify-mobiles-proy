@@ -1,11 +1,10 @@
 import 'dart:ui';
 
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../widgets/songinfo_bottom_sheet.dart';
-import '../player_controller.dart';
+import '/presentation/controllers/player/player_controller.dart';
 import 'albumart_lyrics.dart';
 import 'backgroud_image.dart';
 import 'lyrics_switch.dart';

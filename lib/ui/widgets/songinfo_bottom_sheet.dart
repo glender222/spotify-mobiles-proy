@@ -12,7 +12,7 @@ import '../../presentation/controllers/settings/settings_controller.dart';
 import '/utils/helper.dart';
 import '/services/piped_service.dart';
 import '/ui/widgets/sleep_timer_bottom_sheet.dart';
-import '/ui/player/player_controller.dart';
+import '/presentation/controllers/player/player_controller.dart';
 import '../../presentation/controllers/library/library_songs_controller.dart';
 import '/ui/widgets/add_to_playlist.dart';
 import '/ui/widgets/snackbar.dart';
@@ -164,7 +164,10 @@ class SongInfoBottomSheet extends StatelessWidget {
                       }
                       Get.toNamed(ScreenNavigationSetup.albumScreen,
                           id: ScreenNavigationSetup.id,
-                          arguments: (null, song.extras!['album']['id']));
+                          arguments: (
+                            null,
+                            song.extras!['album']['id'] as String
+                          ));
                     },
                   )
                 : const SizedBox.shrink(),

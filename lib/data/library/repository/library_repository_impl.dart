@@ -102,9 +102,10 @@ class LibraryRepositoryImpl implements LibraryRepository {
 
   @override
   Stream<List<LibrarySongEntity>> watchLibrarySongs() async* {
-    // For now, return a single emission
-    // TODO: Implement proper stream with Hive watch
     yield await getLibrarySongs();
+    await for (final _ in _localDataSource.watchLibrarySongs()) {
+      yield await getLibrarySongs();
+    }
   }
 
   //========================

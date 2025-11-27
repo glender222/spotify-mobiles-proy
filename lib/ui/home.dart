@@ -10,7 +10,7 @@ import '../utils/helper.dart';
 import '../ui/navigator.dart';
 import '../ui/player/player.dart';
 import 'player/components/mini_player.dart';
-import 'player/player_controller.dart';
+import '/presentation/controllers/player/player_controller.dart';
 import 'widgets/bottom_nav_bar.dart';
 import 'widgets/scroll_to_hide.dart';
 import 'widgets/sliding_up_panel.dart';
@@ -28,7 +28,7 @@ class Home extends StatelessWidget {
     final homeController = Get.find<HomeController>();
     final size = MediaQuery.of(context).size;
     final isWideScreen = size.width > 800;
-    if (!playerController.initFlagForPlayer &&
+    if (!playerController.initFlagForPlayer.value &&
         settingsController.isBottomNavBarEnabled.isFalse) {
       if (isWideScreen) {
         playerController.playerPanelMinHeight.value =
@@ -72,7 +72,7 @@ class Home extends StatelessWidget {
                   settingsController.isBottomNavBarEnabled.isTrue
                       ? ScrollToHideWidget(
                           isVisible: homeController.isHomeSreenOnTop.isTrue &&
-                              playerController.isPanelGTHOpened.isFalse,
+                              playerController.isPanelGTHOpened.value == false,
                           child: const BottomNavBar())
                       : null,
               key: playerController.homeScaffoldkey,
@@ -131,8 +131,8 @@ class Home extends StatelessWidget {
                                                         horizontal: 20),
                                                 decoration: BoxDecoration(
                                                   color: playerController
-                                                          .isQueueLoopModeEnabled
-                                                          .isFalse
+                                                              .isQueueLoopModeEnabled ==
+                                                          false
                                                       ? Colors.white24
                                                       : Colors.white
                                                           .withOpacity(0.8),

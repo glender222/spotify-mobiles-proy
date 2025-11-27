@@ -10,7 +10,7 @@ import '../../widgets/side_nav_bar.dart';
 import '../Library/library.dart';
 import '../Search/search_screen.dart';
 import '../../../presentation/controllers/settings/settings_controller.dart';
-import '/ui/player/player_controller.dart';
+import '/presentation/controllers/player/player_controller.dart';
 import '/models/playlist.dart';
 import '/models/quick_picks.dart';
 import '/ui/widgets/create_playlist_dialog.dart';

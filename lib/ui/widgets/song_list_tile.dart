@@ -6,7 +6,7 @@ import 'package:get/get.dart';
 import 'package:widget_marquee/widget_marquee.dart';
 
 import '../../models/playlist.dart';
-import '../player/player_controller.dart';
+import '/presentation/controllers/player/player_controller.dart';
 import '../../presentation/controllers/settings/settings_controller.dart';
 import 'add_to_playlist.dart';
 import 'image_widget.dart';
@@ -54,8 +54,7 @@ class SongListTile extends StatelessWidget with RemoveSongFromPlaylistMixin {
           }
         },
         child: Slidable(
-          enabled:
-              Get.find<SettingsController>().slidableActionEnabled.isTrue,
+          enabled: Get.find<SettingsController>().slidableActionEnabled.isTrue,
           startActionPane: ActionPane(motion: const DrawerMotion(), children: [
             SlidableAction(
               onPressed: (context) {
@@ -176,7 +175,7 @@ class SongListTile extends StatelessWidget with RemoveSongFromPlaylistMixin {
                                   )
                                 : const SizedBox.shrink()),
                       Text(
-                        song.extras!['length'] ?? "",
+                        song.extras?['length'] ?? "",
                         style: Theme.of(context).textTheme.titleSmall,
                       ),
                     ],

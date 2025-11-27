@@ -11,6 +11,7 @@ import '../../../domain/download/usecases/get_song_downloading_progress_usecase.
 import '../../../domain/download/usecases/get_current_song_usecase.dart';
 import '../../../domain/download/usecases/get_song_queue_usecase.dart';
 import '../../../domain/download/usecases/is_job_running_usecase.dart';
+import '../../../domain/download/usecases/get_completed_playlist_id_usecase.dart';
 
 class DownloadBinding extends Bindings {
   @override
@@ -25,5 +26,6 @@ class DownloadBinding extends Bindings {
     Get.lazyPut(() => GetCurrentPlaylistIdUseCase());
     Get.lazyPut(() => GetSongQueueUseCase());
     Get.lazyPut(() => GetCurrentSongUseCase());
+    Get.lazyPut(() => GetCompletedPlaylistIdUseCase());
   }
 }

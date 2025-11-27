@@ -12,7 +12,7 @@ import '../../../domain/download/usecases/download_playlist_usecase.dart';
 import '../../../domain/download/usecases/get_playlist_downloading_progress_usecase.dart';
 import '../../../domain/download/usecases/get_current_playlist_id_usecase.dart';
 import '../../navigator.dart';
-import '../../player/player_controller.dart';
+import '/presentation/controllers/player/player_controller.dart';
 import '../../widgets/create_playlist_dialog.dart';
 import '../../widgets/loader.dart';
 import '../../widgets/playlist_export_dialog.dart';

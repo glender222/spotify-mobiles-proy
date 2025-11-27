@@ -1,0 +1,5 @@
+Analyzing 4 items...                                            
+
+   info - Empty catch block - lib\data\download\repository\download_repository_impl.dart:210:21 - empty_catches
+   info - Statements in an if should be enclosed in a block - lib\presentation\controllers\playlist\playlist_controller.dart:321:60 - curly_braces_in_flow_control_structures
+

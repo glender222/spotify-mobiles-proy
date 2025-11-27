@@ -12,6 +12,8 @@ import 'screens/Search/search_result_screen.dart';
 import 'screens/Search/search_screen.dart';
 import '../presentation/bindings/playlist_binding.dart';
 import '../presentation/bindings/home_binding.dart';
+import '../presentation/bindings/artist_binding.dart';
+import '../presentation/bindings/album_binding.dart';
 
 class ScreenNavigationSetup {
   ScreenNavigationSetup._();
@@ -36,47 +38,52 @@ class ScreenNavigation extends StatelessWidget {
         onGenerateRoute: (settings) {
           Get.routing.args = settings.arguments;
           switch (settings.name) {
-
             case ScreenNavigationSetup.homeScreen:
               return GetPageRoute(
                   page: () => const HomeScreen(),
                   binding: HomeBinding(),
                   settings: settings);
-            
+
             case ScreenNavigationSetup.albumScreen:
               final id = (settings.arguments as (Album?, String)).$2;
+              final key = Key(id);
               return GetPageRoute(
                   page: () => AlbumScreen(
-                        key: Key(id),
+                        key: key,
+                        tag: id,
                       ),
+                  binding: AlbumBinding(tag: id),
                   settings: settings);
-            
+
             case ScreenNavigationSetup.playlistScreen:
-             final id = (settings.arguments as List)[1] as String;
+              final id = (settings.arguments as List)[1] as String;
               return GetPageRoute(
                   page: () => PlaylistScreen(
                         key: Key(id),
                       ),
                   binding: PlaylistBinding(),
                   settings: settings);
-            
+
             case ScreenNavigationSetup.searchScreen:
               return GetPageRoute(
                   page: () => const SearchScreen(), settings: settings);
-            
+
             case ScreenNavigationSetup.searchResultScreen:
               return GetPageRoute(
                   page: () => const SearchResultScreen(), settings: settings);
-            
+
             case ScreenNavigationSetup.artistScreen:
               final args = settings.arguments as List;
               final id = args[0] ? args[1] : (args[1] as Artist).browseId;
+              final key = Key(id);
               return GetPageRoute(
                   page: () => ArtistScreen(
-                        key: Key(id),
+                        key: key,
+                        tag: id,
                       ),
+                  binding: ArtistBinding(tag: id),
                   settings: settings);
-            
+
             default:
               return null;
           }

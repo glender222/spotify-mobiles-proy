@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '/ui/player/player_controller.dart';
+import '/presentation/controllers/player/player_controller.dart';
 import 'snackbar.dart';
 
 class SleepTimerBottomSheet extends StatelessWidget {
@@ -33,7 +33,7 @@ class SleepTimerBottomSheet extends StatelessWidget {
                     alignment: Alignment.center,
                     child: Obx(() {
                       final leftDurationInSec =
-                          playerController.timerDurationLeft.value;
+                          playerController.timerDurationLeft.value.inSeconds;
                       final hrs = (leftDurationInSec ~/ 3600)
                           .toString()
                           .padLeft(2, '0');
@@ -65,7 +65,7 @@ class SleepTimerBottomSheet extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    if (playerController.isSleepEndOfSongActive.isFalse)
+                    if (!playerController.isSleepEndOfSongActive)
                       OutlinedButton(
                           onPressed: playerController.addFiveMinutes,
                           style: OutlinedButton.styleFrom(

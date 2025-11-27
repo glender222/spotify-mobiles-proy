@@ -13,9 +13,13 @@ class HomeSectionModel extends HomeSectionEntity {
     final List<dynamic> items;
 
     if (content.runtimeType.toString() == 'AlbumContent') {
-      items = content.albumList.map((album) => AlbumModel.fromLegacyAlbum(album)).toList();
+      items = content.albumList
+          .map((album) => AlbumModel.fromLegacyAlbum(album))
+          .toList();
     } else if (content.runtimeType.toString() == 'PlaylistContent') {
-      items = content.playlistList.map((playlist) => PlaylistModel.fromLegacyPlaylist(playlist)).toList();
+      items = content.playlistList
+          .map((playlist) => PlaylistModel.fromLegacyPlaylist(playlist))
+          .toList();
     } else {
       items = [];
     }
@@ -24,14 +28,18 @@ class HomeSectionModel extends HomeSectionEntity {
   }
 
   factory HomeSectionModel.fromJson(Map<String, dynamic> json) {
-    final List<dynamic> items = (json['items'] as List).map((itemJson) {
-      if (itemJson['modelType'] == 'AlbumModel') {
-        return AlbumModel.fromJson(itemJson);
-      } else if (itemJson['modelType'] == 'PlaylistModel') {
-        return PlaylistModel.fromJson(itemJson);
-      }
-      return null;
-    }).where((item) => item != null).toList();
+    final List<dynamic> items = (json['items'] as List)
+        .map((itemJson) {
+          final itemMap = Map<String, dynamic>.from(itemJson);
+          if (itemMap['modelType'] == 'AlbumModel') {
+            return AlbumModel.fromJson(itemMap);
+          } else if (itemMap['modelType'] == 'PlaylistModel') {
+            return PlaylistModel.fromJson(itemMap);
+          }
+          return null;
+        })
+        .where((item) => item != null)
+        .toList();
 
     return HomeSectionModel(
       title: json['title'],
@@ -40,7 +48,8 @@ class HomeSectionModel extends HomeSectionEntity {
   }
 
   Map<String, dynamic> toJson() {
-    final List<Map<String, dynamic>> itemsJson = items.map<Map<String, dynamic>>((item) {
+    final List<Map<String, dynamic>> itemsJson =
+        items.map<Map<String, dynamic>>((item) {
       if (item is AlbumModel) {
         return item.toJson();
       } else if (item is PlaylistModel) {

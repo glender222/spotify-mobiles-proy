@@ -9,7 +9,7 @@ import '/presentation/controllers/settings/settings_controller.dart';
 import '../../utils/helper.dart';
 import '../widgets/snackbar.dart';
 import '../widgets/up_next_queue.dart';
-import '/ui/player/player_controller.dart';
+import '/presentation/controllers/player/player_controller.dart';
 import '../widgets/sliding_up_panel.dart';
 
 /// Player screen
@@ -132,7 +132,8 @@ class Player extends StatelessWidget {
                                         horizontal: 15),
                                     decoration: BoxDecoration(
                                       color: playerController
-                                              .isQueueLoopModeEnabled.isFalse
+                                                  .isQueueLoopModeEnabled ==
+                                              false
                                           ? Colors.white24
                                           : Colors.white.withOpacity(0.8),
                                       borderRadius: BorderRadius.circular(20),

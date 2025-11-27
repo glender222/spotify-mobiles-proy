@@ -14,7 +14,7 @@ import 'utils/app_link_controller.dart';
 import '/services/audio_handler.dart';
 import '/services/music_service.dart';
 import '/ui/home.dart';
-import '/ui/player/player_controller.dart';
+import 'presentation/bindings/player_binding.dart';
 import 'presentation/controllers/settings/settings_controller.dart';
 import '/ui/utils/theme_controller.dart';
 import 'presentation/controllers/home/home_controller.dart';
@@ -108,6 +108,7 @@ import 'domain/download/usecases/cancel_playlist_download_usecase.dart';
 import 'domain/download/usecases/download_playlist_usecase.dart';
 import 'domain/download/usecases/get_current_playlist_id_usecase.dart';
 import 'domain/download/usecases/get_playlist_downloading_progress_usecase.dart';
+import 'domain/download/usecases/get_completed_playlist_id_usecase.dart';
 
 // Album module imports
 import 'domain/album/repositories/album_repository.dart';
@@ -126,6 +127,7 @@ import 'data/library/repository/library_repository_impl.dart';
 import 'data/library/datasources/library_local_datasource.dart';
 import 'data/library/datasources/library_local_datasource_impl.dart';
 import 'domain/library/usecases/get_library_songs_usecase.dart';
+import 'domain/library/usecases/watch_library_songs_usecase.dart';
 import 'domain/library/usecases/add_song_to_library_usecase.dart';
 import 'domain/library/usecases/remove_song_from_library_usecase.dart';
 import 'domain/library/usecases/get_library_playlists_usecase.dart';
@@ -220,11 +222,12 @@ Future<void> startApplicationServices() async {
 
   // UI Controllers
   Get.lazyPut(() => ThemeController(), fenix: true);
-  Get.lazyPut(() => PlayerController(), fenix: true);
+  PlayerBinding().dependencies();
   Get.lazyPut(() => HomeController(), fenix: true);
   Get.lazyPut(
       () => LibrarySongsController(
             getLibrarySongsUseCase: Get.find<GetLibrarySongsUseCase>(),
+            watchLibrarySongsUseCase: Get.find<WatchLibrarySongsUseCase>(),
             removeSongFromLibraryUseCase:
                 Get.find<RemoveSongFromLibraryUseCase>(),
           ),
@@ -328,6 +331,7 @@ Future<void> startApplicationServices() async {
   Get.lazyPut(() => DownloadPlaylistUseCase(), fenix: true);
   Get.lazyPut(() => GetCurrentPlaylistIdUseCase(), fenix: true);
   Get.lazyPut(() => GetPlaylistDownloadingProgressUseCase(), fenix: true);
+  Get.lazyPut(() => GetCompletedPlaylistIdUseCase(), fenix: true);
 
   // Album Module - Data Sources
   Get.lazyPut<AlbumRemoteDataSource>(
@@ -361,6 +365,7 @@ Future<void> startApplicationServices() async {
       () => LibraryLocalDataSourceImpl(
             songsDownloadBox: Hive.box('SongDownloads'),
             songsCacheBox: Hive.box('SongsCache'),
+            favoritesBox: Hive.box('LIBFAV'),
             playlistsBox: Hive.box('userPlaylists'),
             albumsBox: Hive.box('userAlbums'),
             artistsBox: Hive.box('userArtists'),
@@ -376,6 +381,8 @@ Future<void> startApplicationServices() async {
 
   // Library Module - UseCases
   Get.lazyPut(() => GetLibrarySongsUseCase(), fenix: true);
+  Get.lazyPut(() => WatchLibrarySongsUseCase(Get.find<LibraryRepository>()),
+      fenix: true);
   Get.lazyPut(() => AddSongToLibraryUseCase(), fenix: true);
   Get.lazyPut(() => RemoveSongFromLibraryUseCase(), fenix: true);
   Get.lazyPut(() => GetLibraryPlaylistsUseCase(), fenix: true);
@@ -413,6 +420,7 @@ initHive() async {
   await Hive.openBox('userPlaylists');
   await Hive.openBox('userArtists');
   await Hive.openBox('userAlbums');
+  await Hive.openBox('LIBFAV');
 }
 
 void _setAppInitPrefs() {

@@ -9,6 +9,7 @@ import '../../../domain/album/usecases/get_album_tracks_usecase.dart';
 import '../../../domain/album/usecases/add_album_to_library_usecase.dart';
 import '../../../domain/album/usecases/remove_album_from_library_usecase.dart';
 import '../../../domain/album/usecases/is_album_in_library_usecase.dart';
+import '../../../domain/download/usecases/get_completed_playlist_id_usecase.dart';
 import '../../../mixins/additional_opeartion_mixin.dart';
 import '../../../models/album.dart'; // Legacy model for compatibility
 import '../../../models/playlist.dart';
@@ -31,6 +32,7 @@ class AlbumController extends PlaylistAlbumScreenControllerBase
   final AddAlbumToLibraryUseCase _addToLibrary;
   final RemoveAlbumFromLibraryUseCase _removeFromLibrary;
   final IsAlbumInLibraryUseCase _isInLibrary;
+  final GetCompletedPlaylistIdUseCase _getCompletedPlaylistIdUseCase;
 
   AlbumController({
     required GetAlbumDetailsUseCase getAlbumDetails,
@@ -38,11 +40,13 @@ class AlbumController extends PlaylistAlbumScreenControllerBase
     required AddAlbumToLibraryUseCase addToLibrary,
     required RemoveAlbumFromLibraryUseCase removeFromLibrary,
     required IsAlbumInLibraryUseCase isInLibrary,
+    required GetCompletedPlaylistIdUseCase getCompletedPlaylistIdUseCase,
   })  : _getAlbumDetails = getAlbumDetails,
         _getAlbumTracks = getAlbumTracks,
         _addToLibrary = addToLibrary,
         _removeFromLibrary = removeFromLibrary,
-        _isInLibrary = isInLibrary;
+        _isInLibrary = isInLibrary,
+        _getCompletedPlaylistIdUseCase = getCompletedPlaylistIdUseCase;
 
   // State - Using AlbumEntity (domain) but mapped to Album (legacy) for UI compatibility
   final album =
@@ -68,6 +72,13 @@ class AlbumController extends PlaylistAlbumScreenControllerBase
 
     Future.delayed(const Duration(milliseconds: 200),
         () => Get.find<HomeController>().whenHomeScreenOnTop());
+
+    // Listen for download completion
+    _getCompletedPlaylistIdUseCase().listen((id) {
+      if (id == album.value.browseId) {
+        checkDownloadStatus();
+      }
+    });
   }
 
   void _initAnimation() {

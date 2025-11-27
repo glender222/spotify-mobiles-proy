@@ -6,7 +6,7 @@ import 'package:get/get.dart';
 
 import '../../../presentation/controllers/settings/settings_controller.dart';
 import '../../utils/theme_controller.dart';
-import '../player_controller.dart';
+import '/presentation/controllers/player/player_controller.dart';
 
 class BackgroudImage extends StatelessWidget {
   const BackgroudImage({super.key, this.cacheHeight});
@@ -32,7 +32,6 @@ class BackgroudImage extends StatelessWidget {
                         if (snapshot.connectionState == ConnectionState.done &&
                             snapshot.hasData &&
                             snapshot.data == true) {
-
                           /// if theme mode is dynamic then set the theme with image
                           if (Get.find<SettingsController>()
                                   .themeModetype
@@ -58,9 +57,7 @@ class BackgroudImage extends StatelessWidget {
                 : CachedNetworkImage(
                     memCacheHeight: cacheHeight,
                     imageBuilder: (context, imageProvider) {
-                      Get.find<SettingsController>()
-                                  .themeModetype
-                                  .value ==
+                      Get.find<SettingsController>().themeModetype.value ==
                               ThemeType.dynamic
                           ? Future.delayed(
                               const Duration(milliseconds: 50),

@@ -7,7 +7,7 @@ import '../../models/artist.dart';
 import '../../models/playling_from.dart';
 import '../../models/playlist.dart';
 import '../navigator.dart';
-import '../player/player_controller.dart';
+import '/presentation/controllers/player/player_controller.dart';
 import 'image_widget.dart';
 import 'song_list_tile.dart';
 import 'songinfo_bottom_sheet.dart';
@@ -112,7 +112,7 @@ class ListWidget extends StatelessWidget with RemoveSongFromPlaylistMixin {
                         type: PlaylingFromType.PLAYLIST,
                         name: playlist.title,
                       ))
-                  : playerController.pushSongToQueue(items[index] as MediaItem);
+                  : playerController.playSong(items[index] as MediaItem);
         },
       ),
     );
@@ -154,7 +154,7 @@ class ListWidget extends StatelessWidget with RemoveSongFromPlaylistMixin {
               for (dynamic items in (albums[index].artists).sublist(1)) {
                 artistName = "${artistName + items['name']},";
               }
-            // ignore: empty_catches
+              // ignore: empty_catches
             } catch (e) {}
             artistName = artistName.length > 16
                 ? artistName.substring(0, 16)

@@ -18,7 +18,7 @@ import '../models/playlist.dart';
 import '/services/equalizer.dart';
 import '/services/stream_service.dart';
 import '/models/hm_streaming_data.dart';
-import '/ui/player/player_controller.dart';
+import '../presentation/controllers/player/player_controller.dart';
 import '../presentation/controllers/home/home_controller.dart';
 import '/services/background_task.dart';
 import '/services/permission_service.dart';
@@ -96,9 +96,22 @@ class MyAudioHandler extends BaseAudioHandler with GetxServiceMixin {
     loudnessNormalizationEnabled =
         appPrefsBox.get("loudnessNormalizationEnabled") ?? false;
     _listenForDurationChanges();
+    _listenForVolumeChanges();
     if (GetPlatform.isAndroid) {
       _listenSessionIdStream();
     }
+  }
+
+  void _listenForVolumeChanges() {
+    _player.volumeStream.listen((volume) {
+      final currentCustom = customState.value;
+      Map<String, dynamic> newCustom = {};
+      if (currentCustom is Map) {
+        newCustom = Map<String, dynamic>.from(currentCustom);
+      }
+      newCustom['volume'] = volume;
+      customState.add(newCustom);
+    });
   }
 
   Future<void> _createCacheDir() async {
@@ -645,7 +658,11 @@ class MyAudioHandler extends BaseAudioHandler with GetxServiceMixin {
         break;
 
       case 'openEqualizer':
-        EqualizerService.openEqualizer(_player.androidAudioSessionId!);
+        if (GetPlatform.isAndroid && _player.androidAudioSessionId != null) {
+          EqualizerService.openEqualizer(_player.androidAudioSessionId!);
+        } else {
+          printINFO("Equalizer not supported on this platform");
+        }
         break;
 
       case 'saveSession':

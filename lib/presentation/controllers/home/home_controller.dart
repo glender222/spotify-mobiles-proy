@@ -16,7 +16,7 @@ import '/models/playlist.dart';
 import '/models/quick_picks.dart';
 import '../settings/settings_controller.dart';
 import '/ui/widgets/new_version_dialog.dart';
-import '/ui/player/player_controller.dart';
+import '../player/player_controller.dart';
 import '../../../domain/home/entities/album_entity.dart';
 import '../../../domain/playlist/entities/playlist_entity.dart';
 
@@ -223,7 +223,7 @@ class HomeController extends GetxController {
 
       isHomeSreenOnTop.value = isHomeOnTop;
 
-      if (!playerCon.initFlagForPlayer) {
+      if (!playerCon.initFlagForPlayer.value) {
         if (isHomeOnTop) {
           playerCon.playerPanelMinHeight.value = 75.0;
         } else {

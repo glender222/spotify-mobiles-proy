@@ -18,6 +18,9 @@ abstract class LibraryLocalDataSource {
   /// Check if song exists in library
   Future<bool> songExists(String songId);
 
+  /// Watch library songs for changes
+  Stream<void> watchLibrarySongs();
+
   //========================
   // PLAYLISTS
   //========================

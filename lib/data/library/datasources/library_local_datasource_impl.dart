@@ -1,10 +1,12 @@
 import 'package:hive/hive.dart';
+import 'package:async/async.dart';
 import 'library_local_datasource.dart';
 
 /// Implementation of LibraryLocalDataSource using Hive
 class LibraryLocalDataSourceImpl implements LibraryLocalDataSource {
   final Box _songsDownloadBox;
   final Box _songsCacheBox;
+  final Box _favoritesBox;
   final Box _playlistsBox;
   final Box _albumsBox;
   final Box _artistsBox;
@@ -12,11 +14,13 @@ class LibraryLocalDataSourceImpl implements LibraryLocalDataSource {
   LibraryLocalDataSourceImpl({
     required Box songsDownloadBox,
     required Box songsCacheBox,
+    required Box favoritesBox,
     required Box playlistsBox,
     required Box albumsBox,
     required Box artistsBox,
   })  : _songsDownloadBox = songsDownloadBox,
         _songsCacheBox = songsCacheBox,
+        _favoritesBox = favoritesBox,
         _playlistsBox = playlistsBox,
         _albumsBox = albumsBox,
         _artistsBox = artistsBox;
@@ -43,6 +47,17 @@ class LibraryLocalDataSourceImpl implements LibraryLocalDataSource {
         final value = _songsCacheBox.get(key);
         if (value is Map) {
           allSongs.add(Map<String, dynamic>.from(value));
+        }
+      }
+
+      // Get favorite songs
+      for (var key in _favoritesBox.keys) {
+        final value = _favoritesBox.get(key);
+        if (value is Map) {
+          // Avoid duplicates if song is already in list (e.g. downloaded and favorite)
+          if (!allSongs.any((s) => s['id'] == value['id'])) {
+            allSongs.add(Map<String, dynamic>.from(value));
+          }
         }
       }
 
@@ -85,6 +100,15 @@ class LibraryLocalDataSourceImpl implements LibraryLocalDataSource {
   Future<bool> songExists(String songId) async {
     return _songsDownloadBox.containsKey(songId) ||
         _songsCacheBox.containsKey(songId);
+  }
+
+  @override
+  Stream<void> watchLibrarySongs() {
+    return StreamGroup.merge([
+      _songsDownloadBox.watch(),
+      _songsCacheBox.watch(),
+      _favoritesBox.watch(),
+    ]);
   }
 
   //========================

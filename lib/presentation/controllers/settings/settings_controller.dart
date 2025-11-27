@@ -57,13 +57,15 @@ import '../../../domain/settings/usecases/unlink_piped_usecase.dart';
 import '../../../services/music_service.dart';
 import '../../../utils/helper.dart';
 import '../../../utils/update_check_flag_file.dart';
-import '../../../ui/player/player_controller.dart';
+import '../player/player_controller.dart';
 import '../../../ui/utils/theme_controller.dart';
 import '../home/home_controller.dart';
 
-class SettingsController extends GetxController {
+class SettingsController extends GetxController
+    with GetTickerProviderStateMixin {
   late String _supportDir;
   final cacheSongs = false.obs;
+
   final themeModetype = ThemeType.dynamic.obs;
   final skipSilenceEnabled = false.obs;
   final loudnessNormalizationEnabled = false.obs;
@@ -170,6 +172,11 @@ class SettingsController extends GetxController {
   final _setStopPlaybackOnSwipeAwayUseCase =
       Get.find<SetStopPlaybackOnSwipeAwayUseCase>();
 
+  void enableBottomNavBar(bool val) {
+    _setBottomNavBarEnabledUseCase(val);
+    isBottomNavBarEnabled.value = val;
+  }
+
   @override
   void onInit() {
     _setInitValue();
@@ -211,7 +218,6 @@ class SettingsController extends GetxController {
 
   Future<void> _setInitValue() async {
     currentAppLanguageCode.value = _getAppLanguageUseCase();
-    isBottomNavBarEnabled.value = _isBottomNavBarEnabledUseCase();
     noOfHomeScreenContent.value = _getHomeScreenContentNumberUseCase();
     isTransitionAnimationDisabled.value =
         _isTransitionAnimationDisabledUseCase();
@@ -237,6 +243,7 @@ class SettingsController extends GetxController {
         await _isIgnoringBatteryOptimizationsUseCase();
     autoDownloadFavoriteSongEnabled.value =
         _isAutoDownloadFavoriteSongEnabledUseCase();
+    isBottomNavBarEnabled.value = _isBottomNavBarEnabledUseCase();
   }
 
   void setAppLanguage(String? val) {
@@ -261,26 +268,9 @@ class SettingsController extends GetxController {
     final playerCon = Get.find<PlayerController>();
     _setPlayerUiUseCase(val);
     if (val == 1 && playerCon.gesturePlayerStateAnimationController == null) {
-      playerCon.initGesturePlayerStateAnimationController();
+      playerCon.initGesturePlayerStateAnimationController(this);
     }
     playerUi.value = val;
-  }
-
-  void enableBottomNavBar(bool val) {
-    final homeScrCon = Get.find<HomeController>();
-    final playerCon = Get.find<PlayerController>();
-    if (val) {
-      homeScrCon.onSideBarTabSelected(3);
-      isBottomNavBarEnabled.value = true;
-    } else {
-      isBottomNavBarEnabled.value = false;
-      homeScrCon.onSideBarTabSelected(5);
-    }
-    if (!Get.find<PlayerController>().initFlagForPlayer) {
-      playerCon.playerPanelMinHeight.value =
-          val ? 75.0 : 75.0 + Get.mediaQuery.viewPadding.bottom;
-    }
-    _setBottomNavBarEnabledUseCase(val);
   }
 
   void toggleSlidableAction(bool val) {

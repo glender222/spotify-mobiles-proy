@@ -146,14 +146,23 @@ class ArtistController extends GetxController
       isArtistContentFetched.value = true;
 
       // Create Artist object from entity
-      final entity = artistEntity.value!;
-      artist_ = Artist(
-        browseId: id,
-        name: entity.name,
-        thumbnailUrl: entity.thumbnailUrl ?? "",
-        subscribers: entity.subscribers ?? "",
-        radioId: entity.radioId,
-      );
+      if (artistEntity.value != null) {
+        final entity = artistEntity.value!;
+        artist_ = Artist(
+          browseId: id,
+          name: entity.name,
+          thumbnailUrl: entity.thumbnailUrl ?? "",
+          subscribers: entity.subscribers ?? "",
+          radioId: entity.radioId,
+        );
+      } else {
+        // Fallback if entity is null (should not happen if fetch succeeds)
+        artist_ = Artist(
+          browseId: id,
+          name: "Unknown Artist",
+          thumbnailUrl: "",
+        );
+      }
     } catch (e) {
       printERROR("Error fetching artist content: $e");
       isArtistContentFetched.value = true;
