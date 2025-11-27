@@ -164,12 +164,18 @@ class PlayerController extends GetxController {
       isShuffleModeEnabled.value = state.shuffleMode != ShuffleMode.off;
       currentSongIndex.value = state.queueIndex ?? 0;
 
+      print(
+          "[PlayerController] processingState=${state.processingState}, playing=${state.playing}");
+
       if (state.processingState == PlayerStatus.loading ||
           state.processingState == PlayerStatus.buffering) {
+        print("[PlayerController] Setting buttonState = LOADING");
         buttonState.value = PlayButtonState.loading;
       } else if (state.playing) {
+        print("[PlayerController] Setting buttonState = PLAYING");
         buttonState.value = PlayButtonState.playing;
       } else {
+        print("[PlayerController] Setting buttonState = PAUSED");
         buttonState.value = PlayButtonState.paused;
       }
     });

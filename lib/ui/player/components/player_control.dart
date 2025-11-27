@@ -167,20 +167,11 @@ class PlayerControlWidget extends StatelessWidget {
 }
 
 Widget _nextButton(PlayerController playerController, BuildContext context) {
-  return Obx(() {
-    final isLastSong = playerController.currentQueue.isEmpty ||
-        (!(playerController.isShuffleModeEnabled.isTrue ||
-                playerController.isQueueLoopModeEnabled) &&
-            (playerController.currentQueue.last.id ==
-                playerController.currentSong.value?.id));
-    return IconButton(
-        icon: Icon(
-          Icons.skip_next,
-          color: isLastSong
-              ? Theme.of(context).textTheme.titleLarge!.color!.withOpacity(0.2)
-              : Theme.of(context).textTheme.titleMedium!.color,
-        ),
-        iconSize: 30,
-        onPressed: isLastSong ? null : playerController.next);
-  });
+  return IconButton(
+      icon: Icon(
+        Icons.skip_next,
+        color: Theme.of(context).textTheme.titleMedium!.color,
+      ),
+      iconSize: 30,
+      onPressed: playerController.next);
 }

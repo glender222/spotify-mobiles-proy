@@ -23,7 +23,10 @@ class PlayerRepositoryImpl implements PlayerRepository {
                   : 1.0;
           return _mapPlaybackStateToPlayerState(playbackState, volume);
         },
-      );
+      ).distinct((prev, next) =>
+          prev.playing == next.playing &&
+          prev.status == next.status &&
+          prev.queueIndex == next.queueIndex);
 
   @override
   Stream<MediaItem?> get currentSongStream => _audioHandler.mediaItem;

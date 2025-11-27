@@ -137,6 +137,15 @@ import 'domain/library/usecases/sync_piped_playlists_usecase.dart';
 import 'domain/library/usecases/get_library_albums_usecase.dart';
 import 'domain/library/usecases/get_library_artists_usecase.dart';
 
+// Player Module imports
+import 'domain/player/repositories/audio_source_repository.dart';
+import 'data/player/repositories/audio_source_repository_impl.dart';
+import 'domain/player/repositories/playback_session_repository.dart';
+import 'data/player/repositories/playback_session_repository_impl.dart';
+import 'data/player/datasources/playback_local_data_source.dart';
+import 'domain/player/usecases/get_playable_url_usecase.dart';
+import 'domain/player/usecases/save_playback_session_usecase.dart';
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initHive();
@@ -333,6 +342,27 @@ Future<void> startApplicationServices() async {
   Get.lazyPut(() => GetPlaylistDownloadingProgressUseCase(), fenix: true);
   Get.lazyPut(() => GetCompletedPlaylistIdUseCase(), fenix: true);
 
+  // Player Module - Data Sources
+  Get.lazyPut<PlaybackLocalDataSource>(
+      () => PlaybackLocalDataSourceImpl(
+          prevSessionBox: Hive.box("prevSessionData"),
+          appPrefsBox: Hive.box("AppPrefs")),
+      fenix: true);
+
+  // Player Module - Repositories
+  Get.lazyPut<AudioSourceRepository>(() => AudioSourceRepositoryImpl(),
+      fenix: true);
+  Get.lazyPut<PlaybackSessionRepository>(
+      () => PlaybackSessionRepositoryImpl(Get.find<PlaybackLocalDataSource>()),
+      fenix: true);
+
+  // Player Module - UseCases
+  Get.lazyPut(() => GetPlayableUrlUseCase(Get.find<AudioSourceRepository>()),
+      fenix: true);
+  Get.lazyPut(
+      () => SavePlaybackSessionUseCase(Get.find<PlaybackSessionRepository>()),
+      fenix: true);
+
   // Album Module - Data Sources
   Get.lazyPut<AlbumRemoteDataSource>(
       () => AlbumRemoteDataSourceImpl(Get.find<MusicServices>()),
@@ -421,6 +451,7 @@ initHive() async {
   await Hive.openBox('userArtists');
   await Hive.openBox('userAlbums');
   await Hive.openBox('LIBFAV');
+  await Hive.openBox('prevSessionData'); // Added
 }
 
 void _setAppInitPrefs() {
